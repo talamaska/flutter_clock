@@ -23,12 +23,14 @@ class DrawnHandAnimated extends Hand {
     @required double size,
     @required double angleRadians,
     @required double handHeadRadius,
+    this.second,
     this.value,
   })  : assert(color != null),
         assert(thickness != null),
         assert(size != null),
         assert(angleRadians != null),
         assert(handHeadRadius != null),
+        assert(second != null),
         super(
           color: color,
           size: size,
@@ -39,15 +41,14 @@ class DrawnHandAnimated extends Hand {
   /// How thick the hand should be drawn, in logical pixels.
   final double thickness;
   final double value;
+  final int second;
 
   @override
   Widget build(BuildContext context) {
-    final Size _size = MediaQuery.of(context).size;
-
     return Center(
       child: SizedBox.expand(
         child: Transform.rotate(
-          angle: 0,
+          angle: angleRadians,
           child: CustomPaint(
             painter: SecondsPainterAnimated(
               color: color,
@@ -55,15 +56,16 @@ class DrawnHandAnimated extends Hand {
               handSize: size,
               handHeadRadius: handHeadRadius,
               value: value,
+              second: second,
             ),
             child: CustomPaint(
               painter: SecondsPainterAnimatedProgress(
-                color: color,
-                thickness: thickness,
-                handSize: size,
-                handHeadRadius: handHeadRadius,
-                value: value,
-              ),
+                  color: color,
+                  thickness: thickness,
+                  handSize: size,
+                  handHeadRadius: handHeadRadius,
+                  value: value,
+                  second: second),
             ),
           ),
         ),
@@ -73,11 +75,12 @@ class DrawnHandAnimated extends Hand {
 }
 
 class SecondsPainterAnimated extends CustomPainter {
-  Color color;
-  double thickness;
-  double handSize;
-  double handHeadRadius;
-  double value;
+  final Color color;
+  final double thickness;
+  final double handSize;
+  final double handHeadRadius;
+  final double value;
+  final int second;
 
   SecondsPainterAnimated({
     @required this.color,
@@ -85,6 +88,7 @@ class SecondsPainterAnimated extends CustomPainter {
     @required this.thickness,
     @required this.handHeadRadius,
     @required this.value,
+    @required this.second,
   })  : assert(color != null),
         assert(thickness != null),
         assert(handHeadRadius != null),
@@ -94,18 +98,12 @@ class SecondsPainterAnimated extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // canvas.rotate(Angle.fromDegrees(-90).radians);
     final center = (Offset.zero & size).center;
 
     final linePaint = Paint()
       ..color = color
       ..strokeWidth = thickness
       ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.butt;
-
-    final progressPaint = Paint()
-      ..color = color
-      ..strokeWidth = thickness
       ..strokeCap = StrokeCap.butt;
 
     final innerCirclePaint = Paint()
@@ -157,33 +155,6 @@ class SecondsPainterAnimated extends CustomPainter {
 
     final Path circle = Path()..addOval(rect);
     canvas.drawPath(circle, innerCirclePaint);
-
-    // canvas.drawArc(
-    //   rect,
-    //   vm.radians(0),
-    //   vm.radians(value),
-    //   true,
-    //   progressPaint,
-    // );
-
-    // final textStyle = TextStyle(
-    //   color: Colors.black,
-    //   fontSize: 30,
-    // );
-    // final textSpan = TextSpan(
-    //   text: '${second} - ${animation}',
-    //   style: textStyle,
-    // );
-    // final textPainter = TextPainter(
-    //   text: textSpan,
-    //   textDirection: TextDirection.ltr,
-    // );
-    // textPainter.layout(
-    //   minWidth: 0,
-    //   maxWidth: size.width,
-    // );
-    // final offset = Offset(100, 0);
-    // textPainter.paint(canvas, offset);
   }
 
   @override
@@ -197,11 +168,19 @@ class SecondsPainterAnimated extends CustomPainter {
 }
 
 class SecondsPainterAnimatedProgress extends CustomPainter {
-  Color color;
-  double thickness;
-  double handSize;
-  double handHeadRadius;
-  double value;
+  final Color color;
+  final double thickness;
+  final double handSize;
+  final double handHeadRadius;
+  final double value;
+  final int second;
+  final TextPainter secondPainter;
+
+  static const _secondTextStyle = TextStyle(
+    color: Colors.red,
+    fontSize: 10,
+    fontWeight: FontWeight.bold,
+  );
 
   SecondsPainterAnimatedProgress({
     @required this.color,
@@ -209,12 +188,21 @@ class SecondsPainterAnimatedProgress extends CustomPainter {
     @required this.thickness,
     @required this.handHeadRadius,
     @required this.value,
+    @required this.second,
   })  : assert(color != null),
         assert(thickness != null),
         assert(handHeadRadius != null),
         assert(handSize != null),
         assert(handSize >= 0.0),
-        assert(handSize <= 1.0);
+        assert(handSize <= 1.0),
+        secondPainter = TextPainter(
+          text: TextSpan(
+            text: '$second',
+            style: _secondTextStyle,
+          ),
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
+        );
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -224,26 +212,29 @@ class SecondsPainterAnimatedProgress extends CustomPainter {
       ..strokeWidth = thickness
       ..strokeCap = StrokeCap.butt;
 
-    final innerCirclePaint = Paint()
-      ..color = Colors.red
-      ..strokeWidth = 1
-      ..style = PaintingStyle.fill
-      ..strokeCap = StrokeCap.butt;
-
+    // debugPrint('$test');
+    canvas.translate(size.longestSide / 2, thickness + handHeadRadius * 2);
+    canvas.rotate(vm.radians(270));
     // hand head
+    secondPainter.layout(
+      minWidth: handHeadRadius * 2,
+      maxWidth: handHeadRadius * 2,
+    );
+
+    final offset = Offset(
+      -handHeadRadius,
+      -handHeadRadius + handHeadRadius / 3,
+    );
+    secondPainter.paint(canvas, offset);
+
+    canvas.saveLayer(null, Paint()..blendMode = BlendMode.multiply);
+
     final Rect rect = Rect.fromLTWH(
-      size.longestSide / 2 - handHeadRadius,
-      (1 - handSize) * size.shortestSide + thickness + handHeadRadius,
+      -handHeadRadius,
+      -handHeadRadius,
       handHeadRadius * 2,
       handHeadRadius * 2,
     );
-    // final double test = size.shortestSide / 2 - thickness - handHeadRadius;
-    // debugPrint('$test');
-    canvas.translate(size.longestSide / 2, thickness + handHeadRadius * 2);
-    canvas.rotate(vm.radians(90));
-
-    final Path circle = Path()..addOval(rect);
-    canvas.drawPath(circle, innerCirclePaint);
 
     canvas.drawArc(
       rect,
@@ -252,10 +243,8 @@ class SecondsPainterAnimatedProgress extends CustomPainter {
       true,
       progressPaint,
     );
-
-    canvas.translate(
-        -(size.longestSide / 2), -(thickness + handHeadRadius * 2));
-
+    canvas.translate(size.longestSide / 2, thickness + handHeadRadius * 2);
+    canvas.restore();
     canvas.restore();
   }
 

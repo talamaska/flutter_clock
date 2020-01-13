@@ -10,10 +10,10 @@ import 'package:flutter/semantics.dart';
 import 'package:intl/intl.dart';
 import 'package:vector_math/vector_math_64.dart' show radians;
 
-import 'package:analog_clock/drawn_hand.dart';
+// import 'package:analog_clock/drawn_hand.dart';
 import 'package:analog_clock/drawn_hand_animated.dart';
 
-import 'drawn_hand_animated_minutes.dart';
+// import 'drawn_hand_animated_minutes.dart';
 
 /// Total distance traveled by a second or a minute hand, each second or minute,
 /// respectively.
@@ -251,6 +251,7 @@ class _AnalogClockState extends State<AnalogClock>
               handHeadRadius: 8,
               angleRadians: _now.second * radiansPerTick,
               value: _secondsAnimation.value,
+              second: _now.second,
             ),
             // DrawnHandAnimatedMinutes(
             //   color: customTheme.accentColor,

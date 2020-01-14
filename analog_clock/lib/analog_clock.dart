@@ -37,11 +37,11 @@ class AnalogClock extends StatefulWidget {
 class _AnalogClockState extends State<AnalogClock>
     with TickerProviderStateMixin {
   DateTime _now = DateTime.now();
+  Timer _timer;
   var _temperature = '';
   var _temperatureRange = '';
   var _condition = '';
   var _location = '';
-  Timer _timer;
   AnimationController _secondsController;
   Animation<double> _secondsAnimation;
 
@@ -150,6 +150,7 @@ class _AnalogClockState extends State<AnalogClock>
     _secondsController.dispose();
     _minutesController.dispose();
     _hoursController.dispose();
+
     super.dispose();
   }
 
@@ -168,17 +169,22 @@ class _AnalogClockState extends State<AnalogClock>
       _secondsController.duration =
           Duration(seconds: 1) - Duration(milliseconds: _now.millisecond);
       _secondsController.forward(from: 0.0);
+      // _numbersController.forward(from: 0.0);
 
-      _minutesController.duration = Duration(seconds: 60) -
-          Duration(seconds: _now.second) -
-          Duration(milliseconds: _now.millisecond);
-      _hoursController.duration = Duration(minutes: 60) -
-          Duration(minutes: _now.minute) -
-          Duration(seconds: _now.second) -
-          Duration(milliseconds: _now.millisecond);
+      // _minutesController.duration = Duration(seconds: 60) -
+      //     Duration(seconds: _now.second) -
+      //     Duration(milliseconds: _now.millisecond);
+
+      // _hoursController.duration = Duration(minutes: 60) -
+      //     Duration(minutes: _now.minute) -
+      //     Duration(seconds: _now.second) -
+      //     Duration(milliseconds: _now.millisecond);
 
       if (_now.second == 0) {
         _minutesController.forward(from: 0.0);
+      }
+      if (_now.second == 0 && _now.minute == 0) {
+        _hoursController.forward(from: 0.0);
       }
       // if (_now.second == 0 && _now.minute == 0) {
       //   _hoursController.duration =
@@ -244,46 +250,45 @@ class _AnalogClockState extends State<AnalogClock>
         color: customTheme.backgroundColor,
         child: Stack(
           children: [
-            DrawnHandAnimated(
-              color: customTheme.accentColor,
+            DrawnHandWithProgress(
+              bodyColor: customTheme.accentColor,
+              fillColor: customTheme.backgroundColor,
               thickness: 2,
               size: 1,
-              handHeadRadius: 8,
+              handHeadRadius: 12,
               angleRadians: _now.second * radiansPerTick,
               value: _secondsAnimation.value,
-              second: _now.second,
+              now: _now.second,
+              text: '${_now.second}',
+              scale: _scaleAnimation.value,
+              opacity: _opacityAnimation.value,
             ),
-            // DrawnHandAnimatedMinutes(
-            //   color: customTheme.accentColor,
-            //   thickness: 6,
-            //   size: 0.8,
-            //   handHeadRadius: 8,
-            //   angleRadians: _now.minute * radiansPerTick,
-            //   value: _minutesAnimation.value,
-            // ),
-            // DrawnHand(
-            //   color: customTheme.highlightColor,
-            //   thickness: 6,
-            //   size: 0.8,
-            //   angleRadians: _now.minute * radiansPerTick,
-            //   handHeadRadius: 8,
-            // ),
-            // DrawnHandAnimated(
-            //   color: customTheme.accentColor,
-            //   thickness: 10,
-            //   size: 0.5,
-            //   handHeadRadius: 10,
-            //   angleRadians: _now.hour * radiansPerTick,
-            //   second: _now.minute,
-            //   animation: _hoursAnimation.value,
-            // ),
-            // DrawnHand(
-            //   color: customTheme.primaryColor,
-            //   thickness: 10,
-            //   size: 0.5,
-            //   angleRadians: _now.hour * radiansPerTick,
-            //   handHeadRadius: 10,
-            // ),
+            DrawnHandWithProgress(
+              bodyColor: customTheme.accentColor,
+              fillColor: customTheme.backgroundColor,
+              thickness: 6,
+              size: 0.93,
+              handHeadRadius: 12,
+              angleRadians: _now.minute * radiansPerTick,
+              value: _minutesAnimation.value,
+              now: _now.minute,
+              text: '${_now.minute}',
+              scale: 1.0,
+              opacity: 1.0,
+            ),
+            DrawnHandWithProgress(
+              bodyColor: customTheme.accentColor,
+              fillColor: customTheme.backgroundColor,
+              thickness: 10,
+              size: 0.845,
+              handHeadRadius: 16,
+              angleRadians: _now.hour * radiansPerHour,
+              value: _hoursAnimation.value,
+              now: _now.hour * 5,
+              text: '${_now.hour}',
+              scale: 1.0,
+              opacity: 1.0,
+            ),
             Positioned(
               left: 0,
               bottom: 0,
@@ -292,6 +297,7 @@ class _AnalogClockState extends State<AnalogClock>
                 child: weatherInfo,
               ),
             ),
+            Text('$time'),
           ],
         ),
       ),

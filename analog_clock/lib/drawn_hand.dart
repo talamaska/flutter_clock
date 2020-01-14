@@ -29,7 +29,8 @@ class DrawnHand extends Hand {
         assert(angleRadians != null),
         assert(handHeadRadius != null),
         super(
-          color: color,
+          bodyColor: color,
+          fillColor: color,
           size: size,
           angleRadians: angleRadians,
           handHeadRadius: handHeadRadius,
@@ -46,7 +47,7 @@ class DrawnHand extends Hand {
           angle: angleRadians,
           child: CustomPaint(
             painter: SecondsPainter(
-              color: color,
+              color: bodyColor,
               thickness: thickness,
               handSize: size,
               handHeadRadius: handHeadRadius,

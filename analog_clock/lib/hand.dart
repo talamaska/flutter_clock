@@ -8,22 +8,30 @@ import 'package:flutter/material.dart';
 ///
 /// This only draws one hand of the analog clock. Put it in a [Stack] to have
 /// more than one hand.
+///
+///
+
 abstract class Hand extends StatelessWidget {
   /// Create a const clock [Hand].
   ///
   /// All of the parameters are required and must not be null.
   const Hand({
-    @required this.color,
+    @required this.bodyColor,
+    @required this.fillColor,
     @required this.size,
     @required this.angleRadians,
     @required this.handHeadRadius,
-  })  : assert(color != null),
+  })  : assert(bodyColor != null),
+        assert(fillColor != null),
         assert(size != null),
         assert(handHeadRadius != null),
         assert(angleRadians != null);
 
   /// Hand color.
-  final Color color;
+  final Color bodyColor;
+
+  // Hand progress circle background
+  final Color fillColor;
 
   /// Hand length, as a percentage of the smaller side of the clock's parent
   /// container.

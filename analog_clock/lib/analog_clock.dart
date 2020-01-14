@@ -51,10 +51,26 @@ class _AnalogClockState extends State<AnalogClock>
   AnimationController _hoursController;
   Animation<double> _hoursAnimation;
 
+  AnimationController _secondsNumbersController;
+  AnimationController _minutesNumbersController;
+  AnimationController _hoursNumbersController;
+
   @override
   void initState() {
     super.initState();
     widget.model.addListener(_updateModel);
+    _secondsNumbersController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500),
+    );
+    _minutesNumbersController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500),
+    );
+    _hoursNumbersController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500),
+    );
 
     _secondsController = AnimationController(
       vsync: this,
@@ -150,6 +166,9 @@ class _AnalogClockState extends State<AnalogClock>
     _secondsController.dispose();
     _minutesController.dispose();
     _hoursController.dispose();
+    _secondsNumbersController.dispose();
+    _minutesNumbersController.dispose();
+    _hoursNumbersController.dispose();
 
     super.dispose();
   }
@@ -169,7 +188,7 @@ class _AnalogClockState extends State<AnalogClock>
       _secondsController.duration =
           Duration(seconds: 1) - Duration(milliseconds: _now.millisecond);
       _secondsController.forward(from: 0.0);
-      // _numbersController.forward(from: 0.0);
+      _secondsNumbersController.forward(from: 0.0);
 
       // _minutesController.duration = Duration(seconds: 60) -
       //     Duration(seconds: _now.second) -
@@ -182,18 +201,13 @@ class _AnalogClockState extends State<AnalogClock>
 
       if (_now.second == 0) {
         _minutesController.forward(from: 0.0);
+        _minutesNumbersController.forward(from: 0.0);
       }
       if (_now.second == 0 && _now.minute == 0) {
         _hoursController.forward(from: 0.0);
+        _hoursNumbersController.forward(from: 0.0);
       }
-      // if (_now.second == 0 && _now.minute == 0) {
-      //   _hoursController.duration =
-      //       Duration(seconds: 1) - Duration(milliseconds: _now.millisecond);
-      // }
 
-      // debugPrint('second ${_secondsController.duration}');
-      // Update once per second. Make sure to do it at the beginning of each
-      // new second, so that the clock is accurate.
       _timer = Timer(
         Duration(seconds: 1) - Duration(milliseconds: _now.millisecond),
         _updateTime,
@@ -260,8 +274,8 @@ class _AnalogClockState extends State<AnalogClock>
               value: _secondsAnimation.value,
               now: _now.second,
               text: '${_now.second}',
-              scale: _scaleAnimation.value,
-              opacity: _opacityAnimation.value,
+              numbersController: _secondsNumbersController,
+              progressController: _secondsController,
             ),
             DrawnHandWithProgress(
               bodyColor: customTheme.accentColor,
@@ -273,8 +287,8 @@ class _AnalogClockState extends State<AnalogClock>
               value: _minutesAnimation.value,
               now: _now.minute,
               text: '${_now.minute}',
-              scale: 1.0,
-              opacity: 1.0,
+              numbersController: _minutesNumbersController,
+              progressController: _minutesController,
             ),
             DrawnHandWithProgress(
               bodyColor: customTheme.accentColor,
@@ -286,8 +300,8 @@ class _AnalogClockState extends State<AnalogClock>
               value: _hoursAnimation.value,
               now: _now.hour * 5,
               text: '${_now.hour}',
-              scale: 1.0,
-              opacity: 1.0,
+              numbersController: _hoursNumbersController,
+              progressController: _hoursController,
             ),
             Positioned(
               left: 0,

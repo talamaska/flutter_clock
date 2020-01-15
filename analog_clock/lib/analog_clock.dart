@@ -42,14 +42,10 @@ class _AnalogClockState extends State<AnalogClock>
   var _temperatureRange = '';
   var _condition = '';
   var _location = '';
+
   AnimationController _secondsController;
-  Animation<double> _secondsAnimation;
-
   AnimationController _minutesController;
-  Animation<double> _minutesAnimation;
-
   AnimationController _hoursController;
-  Animation<double> _hoursAnimation;
 
   AnimationController _secondsNumbersController;
   AnimationController _minutesNumbersController;
@@ -59,14 +55,17 @@ class _AnalogClockState extends State<AnalogClock>
   void initState() {
     super.initState();
     widget.model.addListener(_updateModel);
+
     _secondsNumbersController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 500),
     );
+
     _minutesNumbersController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 500),
     );
+
     _hoursNumbersController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 500),
@@ -83,63 +82,16 @@ class _AnalogClockState extends State<AnalogClock>
       }
     });
 
-    _secondsAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
-      CurvedAnimation(
-        parent: _secondsController,
-        curve: Curves.linear,
-      ),
-    );
-
-    _secondsAnimation.addListener(() {
-      setState(() {});
-    });
-
     _minutesController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 60000),
     );
 
-    // _minutesController.addStatusListener((AnimationStatus status) {
-    //   if (status == AnimationStatus.completed) {
-    //     _minutesController.reverse();
-    //   }
-    // });
-
-    _minutesAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
-      CurvedAnimation(
-        parent: _minutesController,
-        curve: Curves.linear,
-      ),
-    );
-
-    _minutesAnimation.addListener(() {
-      setState(() {});
-    });
-
     _hoursController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 3600000),
     );
-
-    // _hoursController.addStatusListener((AnimationStatus status) {
-    //   if (status == AnimationStatus.completed) {
-    //     _hoursController.reverse();
-    //   }
-    // });
-
-    _hoursAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
-      CurvedAnimation(
-        parent: _hoursController,
-        curve: Curves.linear,
-      ),
-    );
-
-    _hoursAnimation.addListener(() {
-      setState(() {});
-    });
-
-    // Set the initial values.
-
+    if (!mounted) return;
     _updateTime();
     _updateModel();
     setState(() {
@@ -149,6 +101,13 @@ class _AnalogClockState extends State<AnalogClock>
     });
     // _hoursController.forward(from: 0.0);
   }
+
+  // @override
+  // void setState(fn) {
+  //   if (mounted) {
+  //     super.setState(fn);
+  //   }
+  // }
 
   @override
   void didUpdateWidget(AnalogClock oldWidget) {
@@ -233,12 +192,13 @@ class _AnalogClockState extends State<AnalogClock>
             // Second hand.
             accentColor: Color(0xFF669DF6),
             backgroundColor: Color(0xFFFFFFFF),
-          )
+            errorColor: Color(0xFFF44336))
         : Theme.of(context).copyWith(
             primaryColor: Color(0xFFD2E3FC),
             highlightColor: Color(0xFF4285F4),
             accentColor: Color(0xFF8AB4F8),
             backgroundColor: Color(0xFF3C4043),
+            errorColor: Colors.greenAccent,
           );
 
     final time = DateFormat.Hms().format(DateTime.now());
@@ -262,57 +222,162 @@ class _AnalogClockState extends State<AnalogClock>
       ),
       child: Container(
         color: customTheme.backgroundColor,
-        child: Stack(
-          children: [
-            DrawnHandWithProgress(
-              bodyColor: customTheme.accentColor,
-              fillColor: customTheme.backgroundColor,
-              thickness: 2,
-              size: 1,
-              handHeadRadius: 12,
-              angleRadians: _now.second * radiansPerTick,
-              value: _secondsAnimation.value,
-              now: _now.second,
-              text: '${_now.second}',
-              numbersController: _secondsNumbersController,
-              progressController: _secondsController,
+        padding: EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
+            BoxShadow(
+              blurRadius: 5,
+              color: Colors.black12,
+              offset: Offset(0, 0),
+              spreadRadius: 1,
             ),
-            DrawnHandWithProgress(
-              bodyColor: customTheme.accentColor,
-              fillColor: customTheme.backgroundColor,
-              thickness: 6,
-              size: 0.93,
-              handHeadRadius: 12,
-              angleRadians: _now.minute * radiansPerTick,
-              value: _minutesAnimation.value,
-              now: _now.minute,
-              text: '${_now.minute}',
-              numbersController: _minutesNumbersController,
-              progressController: _minutesController,
+            BoxShadow(
+              blurRadius: 20,
+              color: Colors.black12,
+              offset: Offset(20, 20),
+              spreadRadius: 1,
+            )
+          ]),
+          child: Stack(
+            children: [
+              ClockFace(customTheme: customTheme),
+              DrawnHandWithProgress(
+                bodyColor: customTheme.accentColor,
+                fillColor: customTheme.backgroundColor,
+                textColor: customTheme.errorColor,
+                thickness: 2,
+                size: 1,
+                handHeadRadius: 12,
+                angleRadians: _now.second * radiansPerTick,
+                now: _now.second,
+                text: '${_now.second}',
+                numbersController: _secondsNumbersController,
+                progressController: _secondsController,
+              ),
+              DrawnHandWithProgress(
+                bodyColor: customTheme.accentColor,
+                fillColor: customTheme.backgroundColor,
+                textColor: customTheme.errorColor,
+                thickness: 6,
+                size: 0.91,
+                handHeadRadius: 12,
+                angleRadians: _now.minute * radiansPerTick,
+                now: _now.minute,
+                text: '${_now.minute}',
+                numbersController: _minutesNumbersController,
+                progressController: _minutesController,
+              ),
+              DrawnHandWithProgress(
+                bodyColor: customTheme.accentColor,
+                fillColor: customTheme.backgroundColor,
+                textColor: customTheme.errorColor,
+                thickness: 10,
+                size: 0.80,
+                handHeadRadius: 16,
+                angleRadians: _now.hour * radiansPerHour,
+                now: _now.hour * 5,
+                text: '${_now.hour}',
+                numbersController: _hoursNumbersController,
+                progressController: _hoursController,
+              ),
+              Positioned(
+                left: 0,
+                bottom: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: weatherInfo,
+                ),
+              ),
+              Text('$time'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ClockFace extends StatelessWidget {
+  const ClockFace({
+    Key key,
+    @required this.customTheme,
+  }) : super(key: key);
+
+  final ThemeData customTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(30.0),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            customTheme.backgroundColor,
+            Colors.black12,
+          ],
+          center: Alignment(-0.6, 0.3),
+          radius: 2,
+          stops: [
+            0.3,
+            1,
+          ],
+        ),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(32.0),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          gradient: RadialGradient(
+            colors: [
+              customTheme.backgroundColor,
+              Colors.black12,
+            ],
+            center: Alignment(0.6, -0.3),
+            radius: 2,
+            stops: [
+              0.3,
+              1,
+            ],
+          ),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(50.0),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [
+                customTheme.backgroundColor,
+                Colors.black12,
+              ],
+              center: Alignment(-0.6, 0.3),
+              radius: 2,
+              stops: [
+                0.3,
+                1,
+              ],
             ),
-            DrawnHandWithProgress(
-              bodyColor: customTheme.accentColor,
-              fillColor: customTheme.backgroundColor,
-              thickness: 10,
-              size: 0.845,
-              handHeadRadius: 16,
-              angleRadians: _now.hour * radiansPerHour,
-              value: _hoursAnimation.value,
-              now: _now.hour * 5,
-              text: '${_now.hour}',
-              numbersController: _hoursNumbersController,
-              progressController: _hoursController,
-            ),
-            Positioned(
-              left: 0,
-              bottom: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: weatherInfo,
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(32.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              gradient: RadialGradient(
+                colors: [
+                  customTheme.backgroundColor,
+                  Colors.black12,
+                ],
+                center: Alignment(0.3, -0.3),
+                radius: 2,
+                stops: [
+                  0.3,
+                  1,
+                ],
               ),
             ),
-            Text('$time'),
-          ],
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 import 'dart:async';
 
+import 'package:analog_clock/hand_body_widget.dart';
 import 'package:analog_clock/hand_progress_widget.dart';
 import 'package:analog_clock/progress_painer.dart';
 
@@ -20,17 +21,19 @@ class DrawnHandWithProgress extends Hand {
   DrawnHandWithProgress({
     @required Color bodyColor,
     @required Color fillColor,
-    @required this.thickness,
     @required double size,
     @required double angleRadians,
     @required double handHeadRadius,
+    @required this.textColor,
+    @required this.thickness,
     @required this.now,
     @required this.text,
-    @required this.value,
+    // @required this.value,
     @required this.numbersController,
     @required this.progressController,
   })  : assert(bodyColor != null),
         assert(fillColor != null),
+        assert(textColor != null),
         assert(thickness != null),
         assert(size != null),
         assert(angleRadians != null),
@@ -47,7 +50,7 @@ class DrawnHandWithProgress extends Hand {
 
   /// How thick the hand should be drawn, in logical pixels.
   final double thickness;
-  final double value;
+  final Color textColor;
   final String text;
   final int now;
   final AnimationController numbersController;
@@ -59,43 +62,30 @@ class DrawnHandWithProgress extends Hand {
       child: SizedBox.expand(
         child: Transform.rotate(
           angle: angleRadians,
-          child: CustomPaint(
-              painter: HandPainter(
-                color: bodyColor,
-                thickness: thickness,
-                handSize: size,
-                handHeadRadius: handHeadRadius,
-                value: value,
-                now: now,
-                text: text,
-              ),
-              child: HandProgressWidget(
-                color: bodyColor,
-                circleColor: fillColor,
-                thickness: thickness,
-                handSize: size,
-                handHeadRadius: handHeadRadius,
-                now: now,
-                text: text,
-                value: value,
-                numbersController: numbersController,
-                progressController: progressController,
-              )
-              // CustomPaint(
-              //   painter: HandProgress(
-              //     color: bodyColor,
-              //     circleColor: fillColor,
-              //     thickness: thickness,
-              //     handSize: size,
-              //     handHeadRadius: handHeadRadius,
-              //     value: value,
-              //     now: now,
-              //     text: text,
-              //     scale: 1,
-              //     opacity: 0,
-              //   ),
-              // ),
-              ),
+          child: HandBody(
+            bodyColor: bodyColor,
+            fillColor: fillColor,
+            thickness: thickness,
+            size: size,
+            angleRadians: angleRadians,
+            handHeadRadius: handHeadRadius,
+            now: now,
+            text: text,
+            numbersController: numbersController,
+            progressController: progressController,
+            child: HandProgress(
+              color: bodyColor,
+              circleColor: fillColor,
+              textColor: textColor,
+              thickness: thickness,
+              handSize: size,
+              handHeadRadius: handHeadRadius,
+              now: now,
+              text: text,
+              numbersController: numbersController,
+              progressController: progressController,
+            ),
+          ),
         ),
       ),
     );

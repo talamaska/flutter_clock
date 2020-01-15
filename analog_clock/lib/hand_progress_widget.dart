@@ -1,13 +1,14 @@
 import 'package:analog_clock/progress_painer.dart';
 import 'package:flutter/widgets.dart';
 
-class HandProgressWidget extends StatefulWidget {
+class HandProgress extends StatefulWidget {
   final Color color;
   final Color circleColor;
+  final Color textColor;
   final double thickness;
   final double handSize;
   final double handHeadRadius;
-  final double value;
+  // final double value;
   final String text;
   final int now;
   final AnimationController progressController;
@@ -19,13 +20,14 @@ class HandProgressWidget extends StatefulWidget {
   //   fontWeight: FontWeight.bold,
   // );
 
-  HandProgressWidget({
+  HandProgress({
     @required this.color,
     @required this.circleColor,
+    @required this.textColor,
     @required this.handSize,
     @required this.thickness,
     @required this.handHeadRadius,
-    @required this.value,
+    // @required this.value,
     @required this.now,
     @required this.text,
     @required this.numbersController,
@@ -34,30 +36,30 @@ class HandProgressWidget extends StatefulWidget {
         assert(numbersController != null),
         assert(progressController != null),
         assert(circleColor != null),
+        assert(textColor != null),
         assert(thickness != null),
         assert(handHeadRadius != null),
         assert(handSize != null),
         assert(handSize >= 0.0),
         assert(handSize <= 1.0);
   @override
-  _HandProgressWidgetState createState() => _HandProgressWidgetState();
+  _HandProgressState createState() => _HandProgressState();
 }
 
-class _HandProgressWidgetState extends State<HandProgressWidget>
-    with TickerProviderStateMixin {
+class _HandProgressState extends State<HandProgress> {
   Animation<double> _scaleAnimation;
   Animation<double> _opacityAnimation;
-  // Animation<double> _secondsAnimation;
+  Animation<double> _progressAnimation;
 
   @override
   void initState() {
     super.initState();
-    // _secondsAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
-    //   CurvedAnimation(
-    //     parent: widget.progressController,
-    //     curve: Curves.linear,
-    //   ),
-    // );
+    _progressAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
+      CurvedAnimation(
+        parent: widget.progressController,
+        curve: Curves.linear,
+      ),
+    );
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 5.0).animate(
       CurvedAnimation(
@@ -71,9 +73,10 @@ class _HandProgressWidgetState extends State<HandProgressWidget>
         curve: Curves.easeInOut,
       ),
     );
-    // _secondsAnimation.addListener(() {
-    //   setState(() {});
-    // });
+
+    _progressAnimation.addListener(() {
+      setState(() {});
+    });
     _scaleAnimation.addListener(() {
       setState(() {});
     });
@@ -90,13 +93,14 @@ class _HandProgressWidgetState extends State<HandProgressWidget>
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: HandProgress(
+      painter: HandProgressPainter(
         color: widget.color,
         circleColor: widget.circleColor,
+        textColor: widget.textColor,
         thickness: widget.thickness,
         handSize: widget.handSize,
         handHeadRadius: widget.handHeadRadius,
-        value: widget.value,
+        value: _progressAnimation.value,
         now: widget.now,
         text: widget.text,
         scale: _scaleAnimation.value,

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart' show Colors;
 import 'package:flutter/widgets.dart';
 import 'package:vector_math/vector_math.dart' as vm;
 
-class HandProgress extends CustomPainter {
+class HandProgressPainter extends CustomPainter {
   final Color color;
   final Color circleColor;
+  final Color textColor;
   final double thickness;
   final double handSize;
   final double handHeadRadius;
@@ -23,9 +24,10 @@ class HandProgress extends CustomPainter {
   //   fontWeight: FontWeight.bold,
   // );
 
-  HandProgress({
+  HandProgressPainter({
     @required this.color,
     @required this.circleColor,
+    @required this.textColor,
     @required this.handSize,
     @required this.thickness,
     @required this.handHeadRadius,
@@ -36,6 +38,7 @@ class HandProgress extends CustomPainter {
     @required this.opacity,
   })  : assert(color != null),
         assert(circleColor != null),
+        assert(textColor != null),
         assert(thickness != null),
         assert(handHeadRadius != null),
         assert(handSize != null),
@@ -47,7 +50,7 @@ class HandProgress extends CustomPainter {
           text: TextSpan(
             text: text,
             style: TextStyle(
-              color: Colors.red,
+              color: textColor,
               fontSize: handHeadRadius * 2 * 0.6,
               fontWeight: FontWeight.bold,
             ),
@@ -67,13 +70,16 @@ class HandProgress extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.save();
-
+    final innerCirclePaint2 = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 1
+      ..style = PaintingStyle.fill
+      ..strokeCap = StrokeCap.butt;
     final TextPainter textPainter2 = TextPainter(
       text: TextSpan(
         text: text,
         style: TextStyle(
-          color: Colors.red.withOpacity(opacity),
+          color: textColor.withOpacity(opacity),
           fontSize: handHeadRadius * 2 * 0.6 * scale,
           fontWeight: FontWeight.bold,
         ),
@@ -81,6 +87,8 @@ class HandProgress extends CustomPainter {
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
     );
+
+    canvas.save();
 
     // debugPrint('$test');
     // canvas.translate(size.longestSide / 2, thickness + handHeadRadius * 2);
@@ -125,7 +133,13 @@ class HandProgress extends CustomPainter {
 
     canvas.rotate(vm.radians(270));
 
-    // canvas.saveLayer(null, Paint()..blendMode = BlendMode.multiply);
+    canvas.saveLayer(null, Paint()..blendMode = BlendMode.multiply);
+
+    // canvas.rotate(vm.radians(-270));
+    // final Path circle2 = Path()..addOval(rect);
+    // canvas.drawPath(circle2, innerCirclePaint2);
+    // textPainter.paint(canvas, offset);
+    // canvas.rotate(vm.radians(270));
 
     canvas.drawArc(
       rect,
@@ -139,13 +153,16 @@ class HandProgress extends CustomPainter {
       -size.longestSide / 2,
       -thickness + handHeadRadius + (1 - handSize) * size.shortestSide,
     );
-    // canvas.restore();
     canvas.restore();
+    canvas.restore();
+    // canvas.drawShadow(path, Colors.black, 10.0, true);
   }
 
   @override
-  bool shouldRepaint(HandProgress oldDelegate) {
+  bool shouldRepaint(HandProgressPainter oldDelegate) {
     return oldDelegate.color != color ||
+        oldDelegate.textPainter != textPainter ||
+        oldDelegate.circleColor != circleColor ||
         oldDelegate.thickness != thickness ||
         oldDelegate.handSize != handSize ||
         oldDelegate.handHeadRadius != handHeadRadius ||

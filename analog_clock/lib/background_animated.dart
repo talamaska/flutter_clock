@@ -5,15 +5,18 @@ import 'package:vector_math/vector_math.dart' as vm;
 class BackgroundAnimated extends StatefulWidget {
   final AnimationController controller;
   final Color color;
+  final double radius;
   final Offset circleOffset;
   final Offset rotationOffset;
 
   BackgroundAnimated({
     this.controller,
     this.color,
+    this.radius,
     this.circleOffset,
     this.rotationOffset,
   })  : assert(color != null),
+        assert(radius != null),
         assert(controller != null),
         assert(circleOffset != null),
         assert(rotationOffset != null);
@@ -50,6 +53,7 @@ class _BackgroundAnimatedState extends State<BackgroundAnimated> {
         painter: BackgroundPaint(
           rotation: _handAnimation.value,
           color: widget.color,
+          radius: widget.radius,
           circleOffset: widget.circleOffset,
           rotationOffset: widget.rotationOffset,
         ),
@@ -61,15 +65,18 @@ class _BackgroundAnimatedState extends State<BackgroundAnimated> {
 class BackgroundPaint extends CustomPainter {
   final Color color;
   final double rotation;
+  final double radius;
   final Offset circleOffset;
   final Offset rotationOffset;
   BackgroundPaint({
     this.color,
     this.rotation,
+    this.radius,
     this.circleOffset,
     this.rotationOffset,
   })  : assert(color != null),
         assert(rotation != null),
+        assert(radius != null),
         assert(circleOffset != null),
         assert(rotationOffset != null);
 
@@ -84,9 +91,9 @@ class BackgroundPaint extends CustomPainter {
       ..strokeCap = StrokeCap.butt;
 
     canvas.save();
-    canvas.translate(rotationOffset.dx * size.longestSide,
-        rotationOffset.dy * size.shortestSide);
-    canvas.rotate(vm.radians(rotation));
+    // canvas.translate(rotationOffset.dx * size.longestSide,
+    //     rotationOffset.dy * size.shortestSide);
+    // canvas.rotate(vm.radians(rotation));
     // final rect = Rect.fromCenter(
     //     center: Offset(-0.1 * size.shortestSide, 0.1 * size.shortestSide),
     //     width: size.shortestSide / 2,
@@ -100,7 +107,7 @@ class BackgroundPaint extends CustomPainter {
       ),
       // Offset(size.shortestSide / 2, size.shortestSide / 2),
       // center,
-      size.shortestSide / 4,
+      size.shortestSide * radius,
       paint,
     );
 

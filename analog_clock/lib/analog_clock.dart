@@ -195,7 +195,7 @@ class _AnalogClockState extends State<AnalogClock>
             // Second hand.
             accentColor: Color(0xFF669DF6),
             backgroundColor: Color(0xFFFFFFFF),
-            errorColor: Color(0xFFF44336),
+            errorColor: Color(0xFF4285F4),
           )
         : Theme.of(context).copyWith(
             primaryColor: Color(0xFFD2E3FC),
@@ -311,19 +311,29 @@ class _AnalogClockState extends State<AnalogClock>
                 color: customTheme.primaryColor.withOpacity(0.15),
                 circleOffset: Offset(-0.05, 0.1),
                 rotationOffset: Offset(-0.05, 0.1),
+                radius: 0.25,
               ),
-              // BackgroundAnimated(
-              //   controller: _minutesController,
-              //   color: customTheme.primaryColor.withOpacity(0.15),
-              //   circleOffset: Offset(0.5, 0.5),
-              //   rotationOffset: Offset(0.5, 0.5),
-              // ),
-              // BackgroundAnimated(
-              //   controller: _minutesController,
-              //   color: customTheme.primaryColor.withOpacity(0.15),
-              //   circleOffset: Offset(-0.1, -0.1),
-              //   rotationOffset: Offset(1.1, 1),
-              // ),
+              BackgroundAnimated(
+                controller: _minutesController,
+                color: customTheme.primaryColor.withOpacity(0.15),
+                circleOffset: Offset(1.05, -0.2),
+                rotationOffset: Offset(1.05, 0.5),
+                radius: 0.38,
+              ),
+              BackgroundAnimated(
+                controller: _minutesController,
+                color: customTheme.primaryColor.withOpacity(0.15),
+                circleOffset: Offset(1.05, 0.95),
+                rotationOffset: Offset(1, 1),
+                radius: 0.24,
+              ),
+              BackgroundAnimated(
+                controller: _minutesController,
+                color: customTheme.primaryColor.withOpacity(0.15),
+                circleOffset: Offset(0, 1),
+                rotationOffset: Offset(0, 1),
+                radius: 0.40,
+              ),
               Positioned(
                 left: 0,
                 bottom: 0,

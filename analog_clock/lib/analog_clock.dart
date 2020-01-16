@@ -202,7 +202,7 @@ class _AnalogClockState extends State<AnalogClock>
             highlightColor: Color(0xFF4285F4),
             accentColor: Color(0xFF8AB4F8),
             backgroundColor: Color(0xFF3C4043),
-            errorColor: Color(0xFFF44336),
+            errorColor: Colors.green,
           );
 
     final time = DateFormat.Hms().format(DateTime.now());

@@ -4,10 +4,19 @@ import 'package:vector_math/vector_math.dart' as vm;
 
 class BackgroundAnimated extends StatefulWidget {
   final AnimationController controller;
+  final Color color;
+  final Offset circleOffset;
+  final Offset rotationOffset;
 
   BackgroundAnimated({
     this.controller,
-  });
+    this.color,
+    this.circleOffset,
+    this.rotationOffset,
+  })  : assert(color != null),
+        assert(controller != null),
+        assert(circleOffset != null),
+        assert(rotationOffset != null);
 
   @override
   _BackgroundAnimatedState createState() => _BackgroundAnimatedState();
@@ -38,37 +47,64 @@ class _BackgroundAnimatedState extends State<BackgroundAnimated> {
       width: double.infinity,
       height: double.infinity,
       child: CustomPaint(
-        painter: BackgroundPaint(rotation: _handAnimation.value),
+        painter: BackgroundPaint(
+          rotation: _handAnimation.value,
+          color: widget.color,
+          circleOffset: widget.circleOffset,
+          rotationOffset: widget.rotationOffset,
+        ),
       ),
     );
   }
 }
 
 class BackgroundPaint extends CustomPainter {
+  final Color color;
   final double rotation;
-  BackgroundPaint({this.rotation});
+  final Offset circleOffset;
+  final Offset rotationOffset;
+  BackgroundPaint({
+    this.color,
+    this.rotation,
+    this.circleOffset,
+    this.rotationOffset,
+  })  : assert(color != null),
+        assert(rotation != null),
+        assert(circleOffset != null),
+        assert(rotationOffset != null);
 
   @override
   void paint(Canvas canvas, Size size) {
     // debugPrint('$rotation');
     final center = (Offset.zero & size).center;
     final paint = Paint()
-      ..color = Colors.red.withOpacity(0.2)
-      ..strokeWidth = 5
+      ..color = color
+      ..strokeWidth = 0
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.butt;
 
     canvas.save();
+    canvas.translate(rotationOffset.dx * size.longestSide,
+        rotationOffset.dy * size.shortestSide);
+    canvas.rotate(vm.radians(rotation));
+    // final rect = Rect.fromCenter(
+    //     center: Offset(-0.1 * size.shortestSide, 0.1 * size.shortestSide),
+    //     width: size.shortestSide / 2,
+    //     height: size.shortestSide / 2);
 
+    // canvas.drawOval(rect, paint);
     canvas.drawCircle(
-      Offset(-0.25 * size.shortestSide, 0.25 * size.shortestSide),
+      Offset(
+        circleOffset.dx * size.longestSide,
+        circleOffset.dy * size.shortestSide,
+      ),
+      // Offset(size.shortestSide / 2, size.shortestSide / 2),
       // center,
-      size.shortestSide / 2,
+      size.shortestSide / 4,
       paint,
     );
 
-    canvas.translate(-0.28 * size.shortestSide, 0.28 * size.shortestSide);
-    canvas.rotate(vm.radians(rotation));
+    // canvas.translate(0.5 * size.shortestSide, -0.5 * size.shortestSide);
 
     canvas.restore();
   }

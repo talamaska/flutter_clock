@@ -60,7 +60,7 @@ class HandProgressPainter extends CustomPainter {
         text: text,
         style: TextStyle(
           color: textColor,
-          fontSize: getRadius(size, handHeadRadius) * 2 * 0.8,
+          fontSize: getRadius(size, handHeadRadius) * 2 * 0.7,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -96,7 +96,7 @@ class HandProgressPainter extends CustomPainter {
 
     final offset = Offset(
       -getRadius(size, handHeadRadius),
-      -getRadius(size, handHeadRadius) + getRadius(size, handHeadRadius) * 0.1,
+      -getRadius(size, handHeadRadius) + getRadius(size, handHeadRadius) * 0.2,
     );
     textPainter.paint(canvas, offset);
 

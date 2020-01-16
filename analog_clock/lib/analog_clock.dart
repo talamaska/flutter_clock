@@ -195,13 +195,14 @@ class _AnalogClockState extends State<AnalogClock>
             // Second hand.
             accentColor: Color(0xFF669DF6),
             backgroundColor: Color(0xFFFFFFFF),
-            errorColor: Color(0xFFF44336))
+            errorColor: Color(0xFFF44336),
+          )
         : Theme.of(context).copyWith(
             primaryColor: Color(0xFFD2E3FC),
             highlightColor: Color(0xFF4285F4),
             accentColor: Color(0xFF8AB4F8),
             backgroundColor: Color(0xFF3C4043),
-            errorColor: Colors.redAccent[400],
+            errorColor: Color(0xFFF44336),
           );
 
     final time = DateFormat.Hms().format(DateTime.now());
@@ -230,9 +231,9 @@ class _AnalogClockState extends State<AnalogClock>
           padding: EdgeInsets.all(3.0),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: customTheme.accentColor.withOpacity(0.2),
+            color: customTheme.highlightColor.withOpacity(0.15),
             border: Border.all(
-              color: customTheme.accentColor,
+              color: customTheme.accentColor.withOpacity(0.3),
               style: BorderStyle.solid,
               width: 3,
             ),
@@ -240,10 +241,10 @@ class _AnalogClockState extends State<AnalogClock>
           child: Stack(
             children: [
               OffCenterCircle(
-                borderColor: customTheme.accentColor,
+                borderColor: customTheme.accentColor.withOpacity(0.3),
                 fillColor: customTheme.backgroundColor,
                 thickness: 4,
-                size: 0.70,
+                size: 0.69,
                 offCenter: 0.1,
                 handHeadRadius: 12,
                 angleRadians: _now.minute * radiansPerTick,
@@ -253,8 +254,8 @@ class _AnalogClockState extends State<AnalogClock>
                 progressController: _minutesController,
               ),
               OffCenterCircle(
-                borderColor: customTheme.accentColor,
-                fillColor: customTheme.accentColor.withOpacity(0.2),
+                borderColor: customTheme.accentColor.withOpacity(0.3),
+                fillColor: customTheme.highlightColor.withOpacity(0.15),
                 thickness: 4,
                 size: 0.28,
                 offCenter: 0.19,
@@ -272,7 +273,7 @@ class _AnalogClockState extends State<AnalogClock>
                 textColor: customTheme.errorColor,
                 thickness: 2,
                 size: 1,
-                handHeadRadius: 0.08,
+                handHeadRadius: 0.07,
                 angleRadians: _now.second * radiansPerTick,
                 now: _now.second,
                 text: '${_now.second}',
@@ -283,7 +284,7 @@ class _AnalogClockState extends State<AnalogClock>
                 bodyColor: customTheme.accentColor,
                 fillColor: customTheme.backgroundColor,
                 textColor: customTheme.errorColor,
-                thickness: 4,
+                thickness: 3,
                 size: 0.88,
                 handHeadRadius: 0.09,
                 angleRadians: _now.minute * radiansPerTick,
@@ -296,7 +297,7 @@ class _AnalogClockState extends State<AnalogClock>
                 bodyColor: customTheme.accentColor,
                 fillColor: customTheme.backgroundColor,
                 textColor: customTheme.errorColor,
-                thickness: 6,
+                thickness: 3,
                 size: 0.72,
                 handHeadRadius: 0.12,
                 angleRadians: _now.hour * radiansPerHour,
@@ -305,7 +306,24 @@ class _AnalogClockState extends State<AnalogClock>
                 numbersController: _hoursNumbersController,
                 progressController: _hoursController,
               ),
-              BackgroundAnimated(controller: _minutesController),
+              BackgroundAnimated(
+                controller: _minutesController,
+                color: customTheme.primaryColor.withOpacity(0.15),
+                circleOffset: Offset(-0.05, 0.1),
+                rotationOffset: Offset(-0.05, 0.1),
+              ),
+              // BackgroundAnimated(
+              //   controller: _minutesController,
+              //   color: customTheme.primaryColor.withOpacity(0.15),
+              //   circleOffset: Offset(0.5, 0.5),
+              //   rotationOffset: Offset(0.5, 0.5),
+              // ),
+              // BackgroundAnimated(
+              //   controller: _minutesController,
+              //   color: customTheme.primaryColor.withOpacity(0.15),
+              //   circleOffset: Offset(-0.1, -0.1),
+              //   rotationOffset: Offset(1.1, 1),
+              // ),
               Positioned(
                 left: 0,
                 bottom: 0,

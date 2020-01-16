@@ -110,6 +110,8 @@ class SecondsPainter extends CustomPainter {
       handHeadRadius,
       circlePaint,
     );
+
+    // canvas.drawShadow(path, color, elevation, transparentOccluder)
   }
 
   @override

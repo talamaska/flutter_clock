@@ -45,29 +45,20 @@ class HandPainter extends CustomPainter {
     final linePaint = Paint()
       ..color = color
       ..strokeWidth = 1
+      ..isAntiAlias = true
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
 
     final innerCirclePaint = Paint()
       ..color = color
       ..strokeWidth = thickness
+      ..isAntiAlias = true
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
-
-    final innerCirclePaint2 = Paint()
-      ..color = Colors.white
-      ..strokeWidth = thickness
-      ..style = PaintingStyle.fill
-      ..strokeCap = StrokeCap.butt;
-
-    final endHand = Paint()
-      ..color = color
-      ..strokeWidth = thickness
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
 
     final circlePaint = Paint()
       ..color = color
+      ..isAntiAlias = true
       ..strokeWidth = 0;
 
     // final centralAsixPaint = Paint()

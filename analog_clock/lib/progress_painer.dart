@@ -42,10 +42,12 @@ class HandProgressPainter extends CustomPainter {
         progressPaint = Paint()
           ..color = color
           ..strokeWidth = thickness
+          ..isAntiAlias = true
           ..strokeCap = StrokeCap.butt,
         innerCirclePaint = Paint()
           ..color = circleColor
           ..strokeWidth = 1
+          ..isAntiAlias = true
           ..style = PaintingStyle.fill
           ..strokeCap = StrokeCap.butt;
 

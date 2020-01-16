@@ -1,13 +1,14 @@
-import 'package:analog_clock/hand_painter.dart';
+import 'package:analog_clock/hand_circle_painter.dart';
 import 'package:flutter/widgets.dart';
 
-class HandBody extends StatefulWidget {
+class HandBodyCircle extends StatefulWidget {
   final Widget child;
-  HandBody({
+  HandBodyCircle({
     this.child,
-    @required this.bodyColor,
+    @required this.borderColor,
     @required this.fillColor,
     @required this.size,
+    @required this.offCenter,
     @required this.angleRadians,
     @required this.handHeadRadius,
     @required this.thickness,
@@ -17,9 +18,10 @@ class HandBody extends StatefulWidget {
     @required this.progressController,
   });
 
-  final Color bodyColor;
+  final Color borderColor;
   final Color fillColor;
   final double size;
+  final double offCenter;
   final double angleRadians;
   final double handHeadRadius;
   final double thickness;
@@ -29,10 +31,10 @@ class HandBody extends StatefulWidget {
   final AnimationController progressController;
 
   @override
-  _HandBodyState createState() => _HandBodyState();
+  _HandBodyCircleState createState() => _HandBodyCircleState();
 }
 
-class _HandBodyState extends State<HandBody> {
+class _HandBodyCircleState extends State<HandBodyCircle> {
   Animation<double> _handAnimation;
   @override
   void initState() {
@@ -54,10 +56,12 @@ class _HandBodyState extends State<HandBody> {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: HandPainter(
-        color: widget.bodyColor,
+      painter: HandCirclePainter(
+        borderColor: widget.borderColor,
+        fillColor: widget.fillColor,
         thickness: widget.thickness,
         handSize: widget.size,
+        offCenter: widget.offCenter,
         handHeadRadius: widget.handHeadRadius,
         value: _handAnimation.value,
         now: widget.now,

@@ -25,6 +25,10 @@ class HandPainter extends CustomPainter {
         assert(handSize >= 0.0),
         assert(handSize <= 1.0);
 
+  double getRadius(Size size, kRadius) {
+    return (size.shortestSide / 2) * kRadius;
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     // final shadow = BoxShadow(
@@ -40,14 +44,14 @@ class HandPainter extends CustomPainter {
 
     final linePaint = Paint()
       ..color = color
-      ..strokeWidth = thickness
+      ..strokeWidth = 1
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
 
     final innerCirclePaint = Paint()
       ..color = color
       ..strokeWidth = thickness
-      ..style = PaintingStyle.fill
+      ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
 
     final innerCirclePaint2 = Paint()
@@ -66,10 +70,10 @@ class HandPainter extends CustomPainter {
       ..color = color
       ..strokeWidth = 0;
 
-    final circlePaint2 = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
+    // final centralAsixPaint = Paint()
+    //   ..color = Colors.black
+    //   ..style = PaintingStyle.fill
+    //   ..strokeWidth = 0;
 
     // hand body
     // first part of the hand
@@ -81,9 +85,12 @@ class HandPainter extends CustomPainter {
 
     final Path path = Path();
     path.moveTo(center.dx, center.dy);
-    path.lineTo(size.longestSide / 2,
-        (1 - handSize) * size.shortestSide + thickness + 2 * handHeadRadius);
-    canvas.drawShadow(path, Colors.black, 10.0, true);
+    path.lineTo(
+        size.longestSide / 2,
+        (1 - handSize) * size.shortestSide +
+            thickness +
+            2 * getRadius(size, handHeadRadius));
+    // canvas.drawShadow(path, Colors.black, 10.0, true);
     canvas.drawPath(path, linePaint);
 
     //second part of the hand
@@ -98,24 +105,24 @@ class HandPainter extends CustomPainter {
 
     final Rect rect1 = Rect.fromCircle(center: center, radius: thickness);
     final Path circle1 = Path()..addOval(rect1);
-    canvas.drawShadow(circle1, Colors.black, 5.0, true);
+    // canvas.drawShadow(circle1, Colors.black, 5.0, true);
     canvas.drawPath(circle1, circlePaint);
-    canvas.drawCircle(
-      center,
-      2,
-      circlePaint2,
-    );
+    // canvas.drawCircle(
+    //   center,
+    //   2,
+    //   centralAsixPaint,
+    // );
 
     final Rect rect = Rect.fromLTWH(
-      size.longestSide / 2 - handHeadRadius - thickness / 2,
+      size.longestSide / 2 - getRadius(size, handHeadRadius) - thickness / 2,
       (1 - handSize) * size.shortestSide + thickness / 2,
-      handHeadRadius * 2 + thickness,
-      handHeadRadius * 2 + thickness,
+      getRadius(size, handHeadRadius) * 2 + thickness,
+      getRadius(size, handHeadRadius) * 2 + thickness,
     );
 
     final Path circle = Path()..addOval(rect);
-    canvas.drawShadow(circle, Colors.black, 5.0, true);
-    canvas.drawPath(circle, innerCirclePaint2);
+    // canvas.drawShadow(circle, Colors.black, 5.0, true);
+    // canvas.drawPath(circle, innerCirclePaint2);
     canvas.drawPath(circle, innerCirclePaint);
   }
 
@@ -123,6 +130,9 @@ class HandPainter extends CustomPainter {
   bool shouldRepaint(HandPainter oldDelegate) {
     return oldDelegate.color != color ||
         oldDelegate.thickness != thickness ||
+        oldDelegate.value != value ||
+        oldDelegate.text != text ||
+        oldDelegate.now != now ||
         oldDelegate.handSize != handSize ||
         oldDelegate.handHeadRadius != handHeadRadius;
   }

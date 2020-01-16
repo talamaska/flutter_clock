@@ -4,6 +4,8 @@
 
 import 'dart:async';
 
+import 'package:analog_clock/background_animated.dart';
+import 'package:analog_clock/off_center_circle.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -148,15 +150,16 @@ class _AnalogClockState extends State<AnalogClock>
           Duration(seconds: 1) - Duration(milliseconds: _now.millisecond);
       _secondsController.forward(from: 0.0);
       _secondsNumbersController.forward(from: 0.0);
+      // _minutesController.forward(from: (_now.second / 0.6) / 100);
+      // _hoursController.forward(from: (_now.minute / 0.6) / 100);
 
-      // _minutesController.duration = Duration(seconds: 60) -
-      //     Duration(seconds: _now.second) -
-      //     Duration(milliseconds: _now.millisecond);
+      _minutesController.duration = Duration(seconds: 60) -
+          // Duration(minutes: _now.minute) -
+          Duration(milliseconds: _now.millisecond);
 
-      // _hoursController.duration = Duration(minutes: 60) -
-      //     Duration(minutes: _now.minute) -
-      //     Duration(seconds: _now.second) -
-      //     Duration(milliseconds: _now.millisecond);
+      _hoursController.duration = Duration(minutes: 60) -
+          // Duration(minutes: _now.minute) -
+          Duration(milliseconds: _now.millisecond);
 
       if (_now.second == 0) {
         _minutesController.forward(from: 0.0);
@@ -198,7 +201,7 @@ class _AnalogClockState extends State<AnalogClock>
             highlightColor: Color(0xFF4285F4),
             accentColor: Color(0xFF8AB4F8),
             backgroundColor: Color(0xFF3C4043),
-            errorColor: Colors.greenAccent,
+            errorColor: Colors.redAccent[400],
           );
 
     final time = DateFormat.Hms().format(DateTime.now());
@@ -222,32 +225,54 @@ class _AnalogClockState extends State<AnalogClock>
       ),
       child: Container(
         color: customTheme.backgroundColor,
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(5.0),
         child: Container(
-          decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-            BoxShadow(
-              blurRadius: 5,
-              color: Colors.black12,
-              offset: Offset(0, 0),
-              spreadRadius: 1,
+          padding: EdgeInsets.all(3.0),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: customTheme.accentColor.withOpacity(0.2),
+            border: Border.all(
+              color: customTheme.accentColor,
+              style: BorderStyle.solid,
+              width: 3,
             ),
-            BoxShadow(
-              blurRadius: 20,
-              color: Colors.black12,
-              offset: Offset(20, 20),
-              spreadRadius: 1,
-            )
-          ]),
+          ),
           child: Stack(
             children: [
-              ClockFace(customTheme: customTheme),
+              OffCenterCircle(
+                borderColor: customTheme.accentColor,
+                fillColor: customTheme.backgroundColor,
+                thickness: 4,
+                size: 0.70,
+                offCenter: 0.1,
+                handHeadRadius: 12,
+                angleRadians: _now.minute * radiansPerTick,
+                now: _now.minute,
+                text: '${_now.minute}',
+                numbersController: _minutesNumbersController,
+                progressController: _minutesController,
+              ),
+              OffCenterCircle(
+                borderColor: customTheme.accentColor,
+                fillColor: customTheme.accentColor.withOpacity(0.2),
+                thickness: 4,
+                size: 0.28,
+                offCenter: 0.19,
+                handHeadRadius: 16,
+                angleRadians: _now.hour * radiansPerHour,
+                now: _now.hour * 5,
+                text: '${_now.hour}',
+                numbersController: _hoursNumbersController,
+                progressController: _hoursController,
+              ),
+              // ClockFace(customTheme: customTheme),
               DrawnHandWithProgress(
                 bodyColor: customTheme.accentColor,
                 fillColor: customTheme.backgroundColor,
                 textColor: customTheme.errorColor,
                 thickness: 2,
                 size: 1,
-                handHeadRadius: 12,
+                handHeadRadius: 0.08,
                 angleRadians: _now.second * radiansPerTick,
                 now: _now.second,
                 text: '${_now.second}',
@@ -258,9 +283,9 @@ class _AnalogClockState extends State<AnalogClock>
                 bodyColor: customTheme.accentColor,
                 fillColor: customTheme.backgroundColor,
                 textColor: customTheme.errorColor,
-                thickness: 6,
-                size: 0.91,
-                handHeadRadius: 12,
+                thickness: 4,
+                size: 0.88,
+                handHeadRadius: 0.09,
                 angleRadians: _now.minute * radiansPerTick,
                 now: _now.minute,
                 text: '${_now.minute}',
@@ -271,15 +296,16 @@ class _AnalogClockState extends State<AnalogClock>
                 bodyColor: customTheme.accentColor,
                 fillColor: customTheme.backgroundColor,
                 textColor: customTheme.errorColor,
-                thickness: 10,
-                size: 0.80,
-                handHeadRadius: 16,
+                thickness: 6,
+                size: 0.72,
+                handHeadRadius: 0.12,
                 angleRadians: _now.hour * radiansPerHour,
                 now: _now.hour * 5,
                 text: '${_now.hour}',
                 numbersController: _hoursNumbersController,
                 progressController: _hoursController,
               ),
+              BackgroundAnimated(controller: _minutesController),
               Positioned(
                 left: 0,
                 bottom: 0,

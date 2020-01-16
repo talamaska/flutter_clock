@@ -61,28 +61,30 @@ class _HandProgressState extends State<HandProgress> {
       ),
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 5.0).animate(
-      CurvedAnimation(
-        parent: widget.numbersController,
-        curve: Curves.easeInOut,
-      ),
-    );
-    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: widget.numbersController,
-        curve: Curves.easeInOut,
-      ),
-    );
+    // _scaleAnimation = Tween<double>(begin: 1.0, end: 5.0).animate(
+    //   CurvedAnimation(
+    //     parent: widget.numbersController,
+    //     curve: Curves.easeInOut,
+    //   ),
+    // );
+    // _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+    //   CurvedAnimation(
+    //     parent: widget.numbersController,
+    //     curve: Curves.easeInOut,
+    //   ),
+    // );
 
     _progressAnimation.addListener(() {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
-    _scaleAnimation.addListener(() {
-      setState(() {});
-    });
-    _opacityAnimation.addListener(() {
-      setState(() {});
-    });
+    // _scaleAnimation.addListener(() {
+    //   setState(() {});
+    // });
+    // _opacityAnimation.addListener(() {
+    //   setState(() {});
+    // });
   }
 
   @override
@@ -103,8 +105,8 @@ class _HandProgressState extends State<HandProgress> {
         value: _progressAnimation.value,
         now: widget.now,
         text: widget.text,
-        scale: _scaleAnimation.value,
-        opacity: _opacityAnimation.value,
+        // scale: _scaleAnimation.value,
+        // opacity: _opacityAnimation.value,
       ),
     );
   }

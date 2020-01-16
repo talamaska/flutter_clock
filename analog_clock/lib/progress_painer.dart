@@ -11,18 +11,10 @@ class HandProgressPainter extends CustomPainter {
   final double handHeadRadius;
   final double value;
 
-  final TextPainter textPainter;
   final Paint progressPaint;
   final Paint innerCirclePaint;
   final String text;
   final int now;
-  final double scale;
-  final double opacity;
-  // static const _secondTextStyle = TextStyle(
-  //   color: Colors.red,
-  //   fontSize: 10,
-  //   fontWeight: FontWeight.bold,
-  // );
 
   HandProgressPainter({
     @required this.color,
@@ -34,8 +26,8 @@ class HandProgressPainter extends CustomPainter {
     @required this.value,
     @required this.now,
     @required this.text,
-    @required this.scale,
-    @required this.opacity,
+    // @required this.scale,
+    // @required this.opacity,
   })  : assert(color != null),
         assert(circleColor != null),
         assert(textColor != null),
@@ -44,20 +36,9 @@ class HandProgressPainter extends CustomPainter {
         assert(handSize != null),
         assert(handSize >= 0.0),
         assert(handSize <= 1.0),
-        assert(scale != null),
-        assert(opacity != null),
-        textPainter = TextPainter(
-          text: TextSpan(
-            text: text,
-            style: TextStyle(
-              color: textColor,
-              fontSize: handHeadRadius * 2 * 0.6,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr,
-        ),
+        // assert(scale != null),
+        // assert(opacity != null),
+
         progressPaint = Paint()
           ..color = color
           ..strokeWidth = thickness
@@ -68,19 +49,18 @@ class HandProgressPainter extends CustomPainter {
           ..style = PaintingStyle.fill
           ..strokeCap = StrokeCap.butt;
 
+  double getRadius(Size size, kRadius) {
+    return (size.shortestSide / 2) * kRadius;
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
-    final innerCirclePaint2 = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 1
-      ..style = PaintingStyle.fill
-      ..strokeCap = StrokeCap.butt;
-    final TextPainter textPainter2 = TextPainter(
+    final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: text,
         style: TextStyle(
-          color: textColor.withOpacity(opacity),
-          fontSize: handHeadRadius * 2 * 0.6 * scale,
+          color: textColor,
+          fontSize: getRadius(size, handHeadRadius) * 2 * 0.8,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -90,19 +70,19 @@ class HandProgressPainter extends CustomPainter {
 
     canvas.save();
 
-    // debugPrint('$test');
-    // canvas.translate(size.longestSide / 2, thickness + handHeadRadius * 2);
     canvas.translate(
       size.longestSide / 2,
-      thickness + handHeadRadius + (1 - handSize) * size.shortestSide,
+      thickness +
+          getRadius(size, handHeadRadius) +
+          (1 - handSize) * size.shortestSide,
     );
     canvas.rotate(-now * vm.radians(360 / 60));
 
     final Rect rect = Rect.fromLTWH(
-      -handHeadRadius,
-      -handHeadRadius,
-      handHeadRadius * 2,
-      handHeadRadius * 2,
+      -getRadius(size, handHeadRadius),
+      -getRadius(size, handHeadRadius),
+      getRadius(size, handHeadRadius) * 2,
+      getRadius(size, handHeadRadius) * 2,
     );
 
     final Path circle = Path()..addOval(rect);
@@ -110,36 +90,17 @@ class HandProgressPainter extends CustomPainter {
 
     // hand head
     textPainter.layout(
-      minWidth: handHeadRadius * 2,
-      maxWidth: handHeadRadius * 2,
+      minWidth: getRadius(size, handHeadRadius) * 2,
+      maxWidth: getRadius(size, handHeadRadius) * 2,
     );
 
     final offset = Offset(
-      -handHeadRadius,
-      -handHeadRadius + handHeadRadius * 0.3,
+      -getRadius(size, handHeadRadius),
+      -getRadius(size, handHeadRadius) + getRadius(size, handHeadRadius) * 0.1,
     );
     textPainter.paint(canvas, offset);
 
-    textPainter2.layout(
-      minWidth: size.width,
-      maxWidth: size.width,
-    );
-
-    final offset2 = Offset(
-      -size.longestSide / 2,
-      (-handHeadRadius + handHeadRadius * 0.3) * scale,
-    );
-    textPainter2.paint(canvas, offset2);
-
     canvas.rotate(vm.radians(270));
-
-    canvas.saveLayer(null, Paint()..blendMode = BlendMode.multiply);
-
-    // canvas.rotate(vm.radians(-270));
-    // final Path circle2 = Path()..addOval(rect);
-    // canvas.drawPath(circle2, innerCirclePaint2);
-    // textPainter.paint(canvas, offset);
-    // canvas.rotate(vm.radians(270));
 
     canvas.drawArc(
       rect,
@@ -148,24 +109,29 @@ class HandProgressPainter extends CustomPainter {
       true,
       progressPaint,
     );
-    // canvas.translate(size.longestSide / 2, thickness + handHeadRadius * 2);
+    canvas.saveLayer(null, Paint()..blendMode = BlendMode.multiply);
+    canvas.rotate(vm.radians(-270));
+    textPainter.paint(canvas, offset);
+    canvas.rotate(vm.radians(270));
+
     canvas.translate(
       -size.longestSide / 2,
-      -thickness + handHeadRadius + (1 - handSize) * size.shortestSide,
+      -thickness +
+          getRadius(size, handHeadRadius) +
+          (1 - handSize) * size.shortestSide,
     );
     canvas.restore();
     canvas.restore();
-    // canvas.drawShadow(path, Colors.black, 10.0, true);
   }
 
   @override
   bool shouldRepaint(HandProgressPainter oldDelegate) {
     return oldDelegate.color != color ||
-        oldDelegate.textPainter != textPainter ||
         oldDelegate.circleColor != circleColor ||
         oldDelegate.thickness != thickness ||
         oldDelegate.handSize != handSize ||
         oldDelegate.handHeadRadius != handHeadRadius ||
+        oldDelegate.text != text ||
         oldDelegate.value != value;
   }
 }

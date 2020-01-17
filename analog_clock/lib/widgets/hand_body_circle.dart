@@ -1,4 +1,4 @@
-import 'package:analog_clock/hand_circle_painter.dart';
+import 'package:analog_clock/painters/hand_circle_painter.dart';
 import 'package:flutter/widgets.dart';
 
 class HandBodyCircle extends StatefulWidget {
@@ -14,7 +14,6 @@ class HandBodyCircle extends StatefulWidget {
     @required this.thickness,
     @required this.text,
     @required this.now,
-    @required this.numbersController,
     @required this.progressController,
   });
 
@@ -27,7 +26,7 @@ class HandBodyCircle extends StatefulWidget {
   final double thickness;
   final String text;
   final int now;
-  final AnimationController numbersController;
+
   final AnimationController progressController;
 
   @override

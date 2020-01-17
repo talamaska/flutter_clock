@@ -11,8 +11,10 @@ dependencies:
   flutter_clock_helper:
     path: ../flutter_clock_helper
   cupertino_icons: ^0.1.2
- 
-  vector_math:
+  path_provider: 1.5.0
+  google_fonts: ^0.3.2
+
+  vector_math: 2.0.8
 
 dev_dependencies:
   flutter_test:
@@ -20,3 +22,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - google_fonts/
+
+  fonts:
+    - family: AnalogClock
+      fonts:
+        - asset: fonts/AnalogClock.ttf

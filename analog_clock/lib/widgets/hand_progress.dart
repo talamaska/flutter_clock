@@ -1,4 +1,4 @@
-import 'package:analog_clock/progress_painer.dart';
+import 'package:analog_clock/painters/progress_painer.dart';
 import 'package:flutter/widgets.dart';
 
 class HandProgress extends StatefulWidget {
@@ -8,17 +8,9 @@ class HandProgress extends StatefulWidget {
   final double thickness;
   final double handSize;
   final double handHeadRadius;
-  // final double value;
   final String text;
   final int now;
   final AnimationController progressController;
-  final AnimationController numbersController;
-
-  // static const _secondTextStyle = TextStyle(
-  //   color: Colors.red,
-  //   fontSize: 10,
-  //   fontWeight: FontWeight.bold,
-  // );
 
   HandProgress({
     @required this.color,
@@ -30,10 +22,8 @@ class HandProgress extends StatefulWidget {
     // @required this.value,
     @required this.now,
     @required this.text,
-    @required this.numbersController,
     @required this.progressController,
   })  : assert(color != null),
-        assert(numbersController != null),
         assert(progressController != null),
         assert(circleColor != null),
         assert(textColor != null),
@@ -47,8 +37,6 @@ class HandProgress extends StatefulWidget {
 }
 
 class _HandProgressState extends State<HandProgress> {
-  Animation<double> _scaleAnimation;
-  Animation<double> _opacityAnimation;
   Animation<double> _progressAnimation;
 
   @override
@@ -61,30 +49,11 @@ class _HandProgressState extends State<HandProgress> {
       ),
     );
 
-    // _scaleAnimation = Tween<double>(begin: 1.0, end: 5.0).animate(
-    //   CurvedAnimation(
-    //     parent: widget.numbersController,
-    //     curve: Curves.easeInOut,
-    //   ),
-    // );
-    // _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-    //   CurvedAnimation(
-    //     parent: widget.numbersController,
-    //     curve: Curves.easeInOut,
-    //   ),
-    // );
-
     _progressAnimation.addListener(() {
       if (mounted) {
         setState(() {});
       }
     });
-    // _scaleAnimation.addListener(() {
-    //   setState(() {});
-    // });
-    // _opacityAnimation.addListener(() {
-    //   setState(() {});
-    // });
   }
 
   @override

@@ -4,25 +4,16 @@
 
 import 'dart:async';
 
-import 'package:analog_clock/background_animated.dart';
-import 'package:analog_clock/off_center_circle.dart';
+import 'package:analog_clock/widgets/background_circles.dart';
+import 'package:analog_clock/widgets/clock_hands.dart';
+import 'package:analog_clock/widgets/clock_texts.dart';
+
+import 'package:analog_clock/widgets/off_center_hands.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:vector_math/vector_math_64.dart' show radians;
-
-// import 'package:analog_clock/drawn_hand.dart';
-import 'package:analog_clock/drawn_hand_animated.dart';
-
-// import 'drawn_hand_animated_minutes.dart';
-
-/// Total distance traveled by a second or a minute hand, each second or minute,
-/// respectively.
-final radiansPerTick = radians(360 / 60);
-
-/// Total distance traveled by an hour hand, each hour, in radians.
-final radiansPerHour = radians(360 / 12);
 
 /// A basic analog clock.
 ///
@@ -41,8 +32,8 @@ class _AnalogClockState extends State<AnalogClock>
   DateTime _now = DateTime.now();
   Timer _timer;
   var _temperature = '';
-  var _temperatureRange = '';
-  var _temperatureHight = '';
+
+  var _temperatureHigh = '';
   var _temperatureLow = '';
   var _condition = '';
   var _location = '';
@@ -50,30 +41,16 @@ class _AnalogClockState extends State<AnalogClock>
   AnimationController _secondsController;
   AnimationController _minutesController;
   AnimationController _hoursController;
+  AnimationController _24hoursController;
 
-  AnimationController _secondsNumbersController;
-  AnimationController _minutesNumbersController;
-  AnimationController _hoursNumbersController;
+  // AnimationController _secondsNumbersController;
+  // AnimationController _minutesNumbersController;
+  // AnimationController _hoursNumbersController;
 
   @override
   void initState() {
     super.initState();
     widget.model.addListener(_updateModel);
-
-    _secondsNumbersController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
-
-    _minutesNumbersController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
-
-    _hoursNumbersController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
 
     _secondsController = AnimationController(
       vsync: this,
@@ -88,13 +65,19 @@ class _AnalogClockState extends State<AnalogClock>
 
     _minutesController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 60000),
+      duration: Duration(seconds: 60),
     );
 
     _hoursController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 3600000),
+      duration: Duration(minutes: 60),
     );
+
+    _24hoursController = AnimationController(
+      vsync: this,
+      duration: Duration(hours: 12),
+    );
+
     if (!mounted) return;
     _updateTime();
     _updateModel();
@@ -102,16 +85,10 @@ class _AnalogClockState extends State<AnalogClock>
       _now = DateTime.now();
       _minutesController.forward(from: (_now.second / 0.6) / 100);
       _hoursController.forward(from: (_now.minute / 0.6) / 100);
+      _24hoursController.forward(from: (_now.hour * 8.3).abs() / 100);
     });
     // _hoursController.forward(from: 0.0);
   }
-
-  // @override
-  // void setState(fn) {
-  //   if (mounted) {
-  //     super.setState(fn);
-  //   }
-  // }
 
   @override
   void didUpdateWidget(AnalogClock oldWidget) {
@@ -129,19 +106,18 @@ class _AnalogClockState extends State<AnalogClock>
     _secondsController.dispose();
     _minutesController.dispose();
     _hoursController.dispose();
-    _secondsNumbersController.dispose();
-    _minutesNumbersController.dispose();
-    _hoursNumbersController.dispose();
-
+    _24hoursController.dispose();
     super.dispose();
   }
 
   void _updateModel() {
     setState(() {
       _temperature = widget.model.temperatureString;
-      _temperatureRange = '(${widget.model.low} - ${widget.model.highString})';
-      _temperatureHight = '${widget.model.highString}';
-      _temperatureLow = '${widget.model.low}';
+      debugPrint(
+          '${widget.model.highString} - ${widget.model.lowString} ${widget.model.weatherString}');
+
+      _temperatureHigh = '${widget.model.highString}';
+      _temperatureLow = '${widget.model.lowString}';
       _condition = widget.model.weatherString;
       _location = widget.model.location;
     });
@@ -153,7 +129,7 @@ class _AnalogClockState extends State<AnalogClock>
       _secondsController.duration =
           Duration(seconds: 1) - Duration(milliseconds: _now.millisecond);
       _secondsController.forward(from: 0.0);
-      _secondsNumbersController.forward(from: 0.0);
+      // _secondsNumbersController.forward(from: 0.0);
       // _minutesController.forward(from: (_now.second / 0.6) / 100);
       // _hoursController.forward(from: (_now.minute / 0.6) / 100);
 
@@ -165,13 +141,19 @@ class _AnalogClockState extends State<AnalogClock>
           // Duration(minutes: _now.minute) -
           Duration(milliseconds: _now.millisecond);
 
+      _24hoursController.duration = Duration(hours: 12) -
+          // Duration(minutes: _now.minute) -
+          Duration(milliseconds: _now.millisecond);
+
       if (_now.second == 0) {
         _minutesController.forward(from: 0.0);
-        _minutesNumbersController.forward(from: 0.0);
       }
       if (_now.second == 0 && _now.minute == 0) {
         _hoursController.forward(from: 0.0);
-        _hoursNumbersController.forward(from: 0.0);
+      }
+
+      if (_now.second == 0 && _now.minute == 0 && _now.hour == 12) {
+        _24hoursController.forward(from: 0.0);
       }
 
       _timer = Timer(
@@ -183,6 +165,7 @@ class _AnalogClockState extends State<AnalogClock>
 
   @override
   Widget build(BuildContext context) {
+    // debugPrint('is24HourFormat ${widget.model.is24HourFormat}');
     // There are many ways to apply themes to your clock. Some are:
     //  - Inherit the parent Theme (see ClockCustomizer in the
     //    flutter_clock_helper package).
@@ -190,16 +173,19 @@ class _AnalogClockState extends State<AnalogClock>
     //  - Create your own [ThemeData], demonstrated in [AnalogClock].
     //  - Create a map of [Color]s to custom keys, demonstrated in
     //    [DigitalClock].
+    final textTheme = Theme.of(context).textTheme;
     final customTheme = Theme.of(context).brightness == Brightness.light
         ? Theme.of(context).copyWith(
-            // Hour hand.
+            // texts, icons
             primaryColor: Color(0xFF4285F4),
-            // Minute hand.
+            // offcenter circle background
             highlightColor: Color(0xFF8AB4F8),
-            // Second hand.
+            // hand body, progress fill, off center circles borders
             accentColor: Color(0xFF669DF6),
             backgroundColor: Color(0xFFFFFFFF),
+            // hand numbers colors
             errorColor: Color(0xFF4285F4),
+            textTheme: GoogleFonts.comfortaaTextTheme(textTheme),
           )
         : Theme.of(context).copyWith(
             primaryColor: Color(0xFFD2E3FC),
@@ -207,19 +193,10 @@ class _AnalogClockState extends State<AnalogClock>
             accentColor: Color(0xFF8AB4F8),
             backgroundColor: Color(0xFF3C4043),
             errorColor: Colors.green,
+            textTheme: GoogleFonts.comfortaaTextTheme(textTheme),
           );
 
     final time = DateFormat.Hms().format(DateTime.now());
-    final weatherInfo = DefaultTextStyle(
-      style: TextStyle(color: customTheme.primaryColor),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(_temperatureRange),
-          Text(_location),
-        ],
-      ),
-    );
 
     return Semantics.fromProperties(
       properties: SemanticsProperties(
@@ -230,290 +207,46 @@ class _AnalogClockState extends State<AnalogClock>
         color: customTheme.backgroundColor,
         padding: EdgeInsets.all(5.0),
         child: Container(
-          padding: EdgeInsets.all(3.0),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: customTheme.highlightColor.withOpacity(0.15),
-            border: Border.all(
-              color: customTheme.accentColor.withOpacity(0.3),
-              style: BorderStyle.solid,
-              width: 3,
-            ),
-          ),
-          child: Stack(
-            children: [
-              BackgroundAnimated(
-                controller: _minutesController,
-                color: customTheme.primaryColor.withOpacity(0.15),
-                circleOffset: Offset(-0.05, 0.1),
-                rotationOffset: Offset(-0.05, 0.1),
-                radius: 0.25,
-              ),
-              BackgroundAnimated(
-                controller: _minutesController,
-                color: customTheme.primaryColor.withOpacity(0.15),
-                circleOffset: Offset(1.05, -0.2),
-                rotationOffset: Offset(1.05, 0.5),
-                radius: 0.38,
-              ),
-              BackgroundAnimated(
-                controller: _minutesController,
-                color: customTheme.primaryColor.withOpacity(0.15),
-                circleOffset: Offset(1.05, 0.95),
-                rotationOffset: Offset(1, 1),
-                radius: 0.24,
-              ),
-              BackgroundAnimated(
-                controller: _minutesController,
-                color: customTheme.primaryColor.withOpacity(0.15),
-                circleOffset: Offset(0, 1),
-                rotationOffset: Offset(0, 1),
-                radius: 0.40,
-              ),
-              OffCenterCircle(
-                borderColor: customTheme.accentColor.withOpacity(0.3),
-                fillColor: customTheme.backgroundColor,
-                thickness: 4,
-                size: 0.70,
-                offCenter: 0.08,
-                handHeadRadius: 12,
-                angleRadians: _now.minute * radiansPerTick,
-                now: _now.minute,
-                text: '${_now.minute}',
-                numbersController: _minutesNumbersController,
-                progressController: _minutesController,
-              ),
-              OffCenterCircle(
-                borderColor: customTheme.accentColor.withOpacity(0.3),
-                fillColor: customTheme.highlightColor.withOpacity(0.15),
-                thickness: 4,
-                size: 0.28,
-                offCenter: 0.19,
-                handHeadRadius: 16,
-                angleRadians: _now.hour * radiansPerHour,
-                now: _now.hour * 5,
-                text: '${_now.hour}',
-                numbersController: _hoursNumbersController,
-                progressController: _hoursController,
-              ),
-              // ClockFace(customTheme: customTheme),
-              DrawnHandWithProgress(
-                bodyColor: customTheme.accentColor,
-                fillColor: customTheme.backgroundColor,
-                textColor: customTheme.errorColor,
-                thickness: 2,
-                size: 1,
-                handHeadRadius: 0.07,
-                angleRadians: _now.second * radiansPerTick,
-                now: _now.second,
-                text: '${_now.second}',
-                numbersController: _secondsNumbersController,
-                progressController: _secondsController,
-              ),
-              DrawnHandWithProgress(
-                bodyColor: customTheme.accentColor,
-                fillColor: customTheme.backgroundColor,
-                textColor: customTheme.errorColor,
-                thickness: 2.2,
-                size: 0.88,
-                handHeadRadius: 0.08,
-                angleRadians: _now.minute * radiansPerTick,
-                now: _now.minute,
-                text: '${_now.minute}',
-                numbersController: _minutesNumbersController,
-                progressController: _minutesController,
-              ),
-              DrawnHandWithProgress(
-                bodyColor: customTheme.accentColor,
-                fillColor: customTheme.backgroundColor,
-                textColor: customTheme.errorColor,
-                thickness: 3,
-                size: 0.72,
-                handHeadRadius: 0.12,
-                angleRadians: _now.hour * radiansPerHour,
-                now: _now.hour * 5,
-                text: '${_now.hour}',
-                numbersController: _hoursNumbersController,
-                progressController: _hoursController,
-              ),
-
-              Positioned(
-                left: 0,
-                top: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Icon(
-                        Icons.wb_sunny,
-                        color: customTheme.primaryColor,
-                        size: 60,
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          text: _temperature,
-                          style: TextStyle(
-                            fontSize: 28,
-                            color: customTheme.primaryColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 0,
-               
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: 50,
-                        padding: EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(5.0),
-                            topRight: Radius.circular(5.0),
-                          ),
-                          border: Border.all(
-                            color: customTheme.accentColor,
-                            style: BorderStyle.solid,
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          '23',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 24,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(6),
-                        width: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(5.0),
-                            bottomRight: Radius.circular(5.0),
-                          ),
-                          border: Border.all(
-                            color: customTheme.accentColor,
-                            style: BorderStyle.solid,
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          '-23',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 24,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-
-              // Text('$time'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ClockFace extends StatelessWidget {
-  const ClockFace({
-    Key key,
-    @required this.customTheme,
-  }) : super(key: key);
-
-  final ThemeData customTheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(30.0),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            customTheme.backgroundColor,
-            Colors.black12,
-          ],
-          center: Alignment(-0.6, 0.3),
-          radius: 2,
-          stops: [
-            0.3,
-            1,
-          ],
-        ),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(32.0),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          gradient: RadialGradient(
-            colors: [
-              customTheme.backgroundColor,
-              Colors.black12,
-            ],
-            center: Alignment(0.6, -0.3),
-            radius: 2,
-            stops: [
-              0.3,
-              1,
-            ],
-          ),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(50.0),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                customTheme.backgroundColor,
-                Colors.black12,
-              ],
-              center: Alignment(-0.6, 0.3),
-              radius: 2,
-              stops: [
-                0.3,
-                1,
-              ],
-            ),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(32.0),
+            padding: EdgeInsets.all(3.0),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white,
-              gradient: RadialGradient(
-                colors: [
-                  customTheme.backgroundColor,
-                  Colors.black12,
-                ],
-                center: Alignment(0.3, -0.3),
-                radius: 2,
-                stops: [
-                  0.3,
-                  1,
-                ],
+              color: customTheme.highlightColor.withOpacity(0.15),
+              border: Border.all(
+                color: customTheme.accentColor.withOpacity(0.3),
+                style: BorderStyle.solid,
+                width: 3,
               ),
             ),
-          ),
-        ),
+            child: Stack(
+              children: <Widget>[
+                BackgroundCircles(
+                  minutesController: _minutesController,
+                  customTheme: customTheme,
+                ),
+                OffCenterCircleHands(
+                    customTheme: customTheme,
+                    now: _now,
+                    minutesController: _minutesController,
+                    hoursController: _hoursController),
+                ClockHands(
+                  customTheme: customTheme,
+                  now: _now,
+                  is24HourFormat: widget.model.is24HourFormat,
+                  hoursController: _hoursController,
+                  hoursController24: _24hoursController,
+                  minutesController: _minutesController,
+                  secondsController: _secondsController,
+                ),
+                ClockTexts(
+                  temperatureHigh: _temperatureHigh,
+                  temperatureLow: _temperatureLow,
+                  location: _location,
+                  temperature: _temperature,
+                  customTheme: customTheme,
+                  condition: _condition,
+                ),
+              ],
+            )),
       ),
     );
   }

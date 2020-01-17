@@ -1,5 +1,7 @@
-import 'package:analog_clock/hand_painter.dart';
+import 'package:analog_clock/helpers.dart';
+import 'package:analog_clock/painters/hand_painter.dart';
 import 'package:flutter/widgets.dart';
+import 'package:vector_math/vector_math.dart';
 
 class HandBody extends StatefulWidget {
   final Widget child;
@@ -13,8 +15,8 @@ class HandBody extends StatefulWidget {
     @required this.thickness,
     @required this.text,
     @required this.now,
-    @required this.numbersController,
     @required this.progressController,
+    @required this.fullRotationController,
   });
 
   final Color bodyColor;
@@ -25,8 +27,8 @@ class HandBody extends StatefulWidget {
   final double thickness;
   final String text;
   final int now;
-  final AnimationController numbersController;
   final AnimationController progressController;
+  final AnimationController fullRotationController;
 
   @override
   _HandBodyState createState() => _HandBodyState();
@@ -34,6 +36,7 @@ class HandBody extends StatefulWidget {
 
 class _HandBodyState extends State<HandBody> {
   Animation<double> _handAnimation;
+  Animation<double> _rotationAnimation;
   @override
   void initState() {
     super.initState();
@@ -43,8 +46,19 @@ class _HandBodyState extends State<HandBody> {
         curve: Curves.linear,
       ),
     );
+    _rotationAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
+      CurvedAnimation(
+        parent: widget.fullRotationController,
+        curve: Curves.linear,
+      ),
+    );
 
     _handAnimation.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    _rotationAnimation.addListener(() {
       if (mounted) {
         setState(() {});
       }
@@ -53,17 +67,21 @@ class _HandBodyState extends State<HandBody> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: HandPainter(
-        color: widget.bodyColor,
-        thickness: widget.thickness,
-        handSize: widget.size,
-        handHeadRadius: widget.handHeadRadius,
-        value: _handAnimation.value,
-        now: widget.now,
-        text: widget.text,
+    // debugPrint('${_rotationAnimation.value}');
+    return Transform.rotate(
+      angle: radians(_rotationAnimation.value),
+      child: CustomPaint(
+        painter: HandPainter(
+          color: widget.bodyColor,
+          thickness: widget.thickness,
+          handSize: widget.size,
+          handHeadRadius: widget.handHeadRadius,
+          value: _handAnimation.value,
+          now: widget.now,
+          text: widget.text,
+        ),
+        child: widget.child,
       ),
-      child: widget.child,
     );
   }
 }

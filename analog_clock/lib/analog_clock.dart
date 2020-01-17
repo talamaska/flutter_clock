@@ -42,6 +42,8 @@ class _AnalogClockState extends State<AnalogClock>
   Timer _timer;
   var _temperature = '';
   var _temperatureRange = '';
+  var _temperatureHight = '';
+  var _temperatureLow = '';
   var _condition = '';
   var _location = '';
 
@@ -138,6 +140,8 @@ class _AnalogClockState extends State<AnalogClock>
     setState(() {
       _temperature = widget.model.temperatureString;
       _temperatureRange = '(${widget.model.low} - ${widget.model.highString})';
+      _temperatureHight = '${widget.model.highString}';
+      _temperatureLow = '${widget.model.low}';
       _condition = widget.model.weatherString;
       _location = widget.model.location;
     });
@@ -211,9 +215,7 @@ class _AnalogClockState extends State<AnalogClock>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(_temperature),
           Text(_temperatureRange),
-          Text(_condition),
           Text(_location),
         ],
       ),
@@ -337,13 +339,91 @@ class _AnalogClockState extends State<AnalogClock>
 
               Positioned(
                 left: 0,
-                bottom: 0,
+                top: 0,
                 child: Padding(
                   padding: const EdgeInsets.all(8),
-                  child: weatherInfo,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Icon(
+                        Icons.wb_sunny,
+                        color: customTheme.primaryColor,
+                        size: 60,
+                      ),
+                      RichText(
+                        text: TextSpan(
+                          text: _temperature,
+                          style: TextStyle(
+                            fontSize: 28,
+                            color: customTheme.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Text('$time'),
+              Positioned(
+                right: 0,
+               
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: 50,
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(5.0),
+                            topRight: Radius.circular(5.0),
+                          ),
+                          border: Border.all(
+                            color: customTheme.accentColor,
+                            style: BorderStyle.solid,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          '23',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 24,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(6),
+                        width: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(5.0),
+                            bottomRight: Radius.circular(5.0),
+                          ),
+                          border: Border.all(
+                            color: customTheme.accentColor,
+                            style: BorderStyle.solid,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          '-23',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 24,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+
+              // Text('$time'),
             ],
           ),
         ),

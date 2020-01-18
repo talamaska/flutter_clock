@@ -10,14 +10,17 @@ class OffCenterCircleHands extends StatelessWidget {
     @required DateTime now,
     @required AnimationController hoursController,
     @required AnimationController minutesController,
+    @required AnimationController hours24Controller,
   })  : _now = now,
         _hoursController = hoursController,
         _minutesController = minutesController,
+        _hours24Controller = hours24Controller,
         super(key: key);
 
   final ThemeData customTheme;
   final DateTime _now;
   final AnimationController _hoursController;
+  final AnimationController _hours24Controller;
   final AnimationController _minutesController;
 
   @override
@@ -35,8 +38,10 @@ class OffCenterCircleHands extends StatelessWidget {
           now: _now.minute,
           text: '${_now.minute}',
           progressController: _minutesController,
+          rotationController: _hoursController,
         ),
         OffCenterCircle(
+          isHourHand: true,
           borderColor: customTheme.accentColor.withOpacity(0.3),
           fillColor: customTheme.highlightColor.withOpacity(0.15),
           thickness: 4,
@@ -47,6 +52,7 @@ class OffCenterCircleHands extends StatelessWidget {
           now: _now.hour * 5,
           text: '${_now.hour}',
           progressController: _hoursController,
+          rotationController: _hours24Controller,
         ),
       ],
     );

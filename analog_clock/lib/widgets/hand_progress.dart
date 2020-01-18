@@ -2,6 +2,7 @@ import 'package:analog_clock/painters/progress_painer.dart';
 import 'package:flutter/widgets.dart';
 
 class HandProgress extends StatefulWidget {
+  final bool isHourHand;
   final Color color;
   final Color circleColor;
   final Color textColor;
@@ -11,6 +12,7 @@ class HandProgress extends StatefulWidget {
   final String text;
   final int now;
   final AnimationController progressController;
+  final AnimationController rotationController;
 
   HandProgress({
     @required this.color,
@@ -23,8 +25,11 @@ class HandProgress extends StatefulWidget {
     @required this.now,
     @required this.text,
     @required this.progressController,
+    @required this.rotationController,
+    this.isHourHand = false,
   })  : assert(color != null),
         assert(progressController != null),
+        assert(rotationController != null),
         assert(circleColor != null),
         assert(textColor != null),
         assert(thickness != null),
@@ -38,10 +43,12 @@ class HandProgress extends StatefulWidget {
 
 class _HandProgressState extends State<HandProgress> {
   Animation<double> _progressAnimation;
+  Animation<double> _rotationAnimation;
 
   @override
   void initState() {
     super.initState();
+    final double rotationDegrees = widget.isHourHand ? 720 : 360;
     _progressAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
       CurvedAnimation(
         parent: widget.progressController,
@@ -50,6 +57,20 @@ class _HandProgressState extends State<HandProgress> {
     );
 
     _progressAnimation.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
+    _rotationAnimation =
+        Tween<double>(begin: 0.0, end: rotationDegrees).animate(
+      CurvedAnimation(
+        parent: widget.rotationController,
+        curve: Curves.linear,
+      ),
+    );
+
+    _rotationAnimation.addListener(() {
       if (mounted) {
         setState(() {});
       }
@@ -72,6 +93,7 @@ class _HandProgressState extends State<HandProgress> {
         handSize: widget.handSize,
         handHeadRadius: widget.handHeadRadius,
         value: _progressAnimation.value,
+        // rotation: _rotationAnimation.value,
         now: widget.now,
         text: widget.text,
         // scale: _scaleAnimation.value,

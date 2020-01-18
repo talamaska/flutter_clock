@@ -1,7 +1,11 @@
 import 'package:analog_clock/analog_clock_icons.dart';
+import 'package:flare_flutter/flare.dart';
+import 'package:flare_flutter/flare_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_dart/math/mat2d.dart';
 
-class ClockTexts extends StatelessWidget {
+class ClockTexts extends StatefulWidget {
   ClockTexts({
     Key key,
     @required String temperatureHigh,
@@ -24,15 +28,12 @@ class ClockTexts extends StatelessWidget {
   final String _location;
   final ThemeData customTheme;
 
-  final _weaterIcons = {
-    "cloudy": AnalogClock.clouds_inv,
-    "foggy": AnalogClock.fog,
-    "rainy": AnalogClock.rain_inv,
-    "snowy": AnalogClock.snow_heavy_inv,
-    "sunny": AnalogClock.sun_inv,
-    "thunderstorm": AnalogClock.cloud_flash_inv,
-    "windy": AnalogClock.wind,
-  };
+  @override
+  _ClockTextsState createState() => _ClockTextsState();
+}
+
+class _ClockTextsState extends State<ClockTexts> {
+  AnimationLoopController _loopController = AnimationLoopController('loop');
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +45,23 @@ class ClockTexts extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Icon(
-                _weaterIcons[_condition],
-                color: customTheme.primaryColor,
-                size: 60,
+              Container(
+                height: 80,
+                width: 80,
+                child: FlareActor(
+                  "assets/animations/${widget._condition}.flr",
+                  animation: 'loop',
+                  color: widget.customTheme.primaryColor,
+                  fit: BoxFit.cover,
+                  controller: _loopController,
+                ),
               ),
               RichText(
                 text: TextSpan(
-                  text: _temperature,
-                  style: customTheme.primaryTextTheme.body2.copyWith(
-                    color: customTheme.primaryColor,
-                    fontSize: 32,
+                  text: widget._temperature,
+                  style: widget.customTheme.primaryTextTheme.body2.copyWith(
+                    color: widget.customTheme.primaryColor,
+                    fontSize: 24,
                   ),
                 ),
               ),
@@ -63,47 +70,82 @@ class ClockTexts extends StatelessWidget {
         ),
         Positioned(
           right: 0,
-          child: Container(
-            width: 100,
-            padding: EdgeInsets.all(6),
-            child: Text(
-              _temperatureHigh,
-              textAlign: TextAlign.right,
-              style: customTheme.primaryTextTheme.body1.copyWith(
-                color: Colors.red,
-                fontSize: 24,
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          right: 0,
           bottom: 0,
-          child: Container(
-            padding: EdgeInsets.all(6),
-            width: 100,
-            child: Text(
-              _temperatureLow,
-              textAlign: TextAlign.right,
-              style: customTheme.primaryTextTheme.body1.copyWith(
-                color: Colors.blue,
-                fontSize: 24,
+          child: Column(
+            children: <Widget>[
+              Container(
+                width: 100,
+                child: Text(
+                  widget._temperatureHigh,
+                  textAlign: TextAlign.right,
+                  style: widget.customTheme.primaryTextTheme.body1.copyWith(
+                    color: Colors.red,
+                    fontSize: 24,
+                  ),
+                ),
               ),
-            ),
+              Container(
+                width: 100,
+                child: Text(
+                  widget._temperatureLow,
+                  textAlign: TextAlign.right,
+                  style: widget.customTheme.primaryTextTheme.body1.copyWith(
+                    color: Colors.blue,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         Positioned(
             bottom: 0,
             left: 0,
             child: Text(
-              _location,
+              widget._location,
               textAlign: TextAlign.right,
-              style: customTheme.primaryTextTheme.body1.copyWith(
-                color: customTheme.primaryColor,
+              style: widget.customTheme.primaryTextTheme.body1.copyWith(
+                color: widget.customTheme.primaryColor,
                 fontSize: 14,
               ),
             ))
       ],
     );
   }
+}
+
+class AnimationLoopController implements FlareController {
+  final String _loopAnimationName;
+  final double _mix;
+
+  AnimationLoopController(this._loopAnimationName, [this._mix = 1.0]);
+
+  bool _looping = true;
+  double _duration = 0.0;
+
+  ActorAnimation _loopAnimation;
+
+  @override
+  void initialize(FlutterActorArtboard artboard) {
+    _loopAnimation = artboard.getAnimation(_loopAnimationName);
+    debugPrint('${_loopAnimation.duration}');
+  }
+
+  @override
+  bool advance(FlutterActorArtboard artboard, double elapsed) {
+    _duration += elapsed;
+
+    if (_looping) {
+      _duration %= _loopAnimation.duration;
+
+      _loopAnimation.apply(_duration, artboard, _mix);
+    }
+    return true;
+  }
+
+  @override
+  void setViewTransform(Mat2D viewTransform) {}
+
+  @override
+  ValueNotifier<bool> isActive;
 }

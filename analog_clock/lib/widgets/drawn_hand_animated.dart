@@ -22,16 +22,16 @@ class DrawnHandWithProgress extends Hand {
     @required this.thickness,
     @required this.now,
     @required this.text,
-    // @required this.value,
     @required this.progressController,
     @required this.fullRotationController,
+    this.isHourHand = false,
   })  : assert(bodyColor != null),
         assert(fillColor != null),
-        assert(textColor != null),
-        assert(thickness != null),
         assert(size != null),
         assert(angleRadians != null),
         assert(handHeadRadius != null),
+        assert(textColor != null),
+        assert(thickness != null),
         assert(now != null),
         assert(text != null),
         super(
@@ -47,6 +47,7 @@ class DrawnHandWithProgress extends Hand {
   final Color textColor;
   final String text;
   final int now;
+  final bool isHourHand;
   final AnimationController progressController;
   final AnimationController fullRotationController;
 
@@ -55,6 +56,7 @@ class DrawnHandWithProgress extends Hand {
     return Center(
       child: SizedBox.expand(
         child: HandBody(
+          isHourHand: isHourHand,
           bodyColor: bodyColor,
           fillColor: fillColor,
           thickness: thickness,
@@ -75,6 +77,7 @@ class DrawnHandWithProgress extends Hand {
             now: now,
             text: text,
             progressController: progressController,
+            rotationController: fullRotationController,
           ),
         ),
       ),

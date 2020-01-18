@@ -41,7 +41,7 @@ class _AnalogClockState extends State<AnalogClock>
   AnimationController _secondsController;
   AnimationController _minutesController;
   AnimationController _hoursController;
-  AnimationController _24hoursController;
+  AnimationController _hours24Controller;
 
   // AnimationController _secondsNumbersController;
   // AnimationController _minutesNumbersController;
@@ -57,12 +57,6 @@ class _AnalogClockState extends State<AnalogClock>
       duration: Duration(milliseconds: 1000),
     );
 
-    _secondsController.addStatusListener((AnimationStatus status) {
-      if (status == AnimationStatus.completed) {
-        _secondsController.reverse();
-      }
-    });
-
     _minutesController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 60),
@@ -73,9 +67,9 @@ class _AnalogClockState extends State<AnalogClock>
       duration: Duration(minutes: 60),
     );
 
-    _24hoursController = AnimationController(
+    _hours24Controller = AnimationController(
       vsync: this,
-      duration: Duration(hours: 12),
+      duration: Duration(hours: 24),
     );
 
     if (!mounted) return;
@@ -83,9 +77,11 @@ class _AnalogClockState extends State<AnalogClock>
     _updateModel();
     setState(() {
       _now = DateTime.now();
-      _minutesController.forward(from: (_now.second / 0.6) / 100);
-      _hoursController.forward(from: (_now.minute / 0.6) / 100);
-      _24hoursController.forward(from: (_now.hour * 8.3).abs() / 100);
+      _minutesController.forward(from: (_now.second / 60));
+      _hoursController.forward(from: (_now.minute / 60));
+      _hours24Controller.forward(
+          from:
+              (_now.hour / 24 + _now.minute / 60 / 60 + _now.second / 60 / 60));
     });
     // _hoursController.forward(from: 0.0);
   }
@@ -106,15 +102,15 @@ class _AnalogClockState extends State<AnalogClock>
     _secondsController.dispose();
     _minutesController.dispose();
     _hoursController.dispose();
-    _24hoursController.dispose();
+    _hours24Controller.dispose();
     super.dispose();
   }
 
   void _updateModel() {
     setState(() {
       _temperature = widget.model.temperatureString;
-      debugPrint(
-          '${widget.model.highString} - ${widget.model.lowString} ${widget.model.weatherString}');
+      // debugPrint(
+      //     '${widget.model.highString} - ${widget.model.lowString} ${widget.model.weatherString}');
 
       _temperatureHigh = '${widget.model.highString}';
       _temperatureLow = '${widget.model.lowString}';
@@ -133,18 +129,18 @@ class _AnalogClockState extends State<AnalogClock>
       // _minutesController.forward(from: (_now.second / 0.6) / 100);
       // _hoursController.forward(from: (_now.minute / 0.6) / 100);
 
-      _minutesController.duration = Duration(seconds: 60) -
-          // Duration(minutes: _now.minute) -
-          Duration(milliseconds: _now.millisecond);
+      // _minutesController.duration = Duration(seconds: 60) -
+      //     // Duration(minutes: _now.minute) -
+      //     Duration(milliseconds: _now.millisecond);
 
-      _hoursController.duration = Duration(minutes: 60) -
-          // Duration(minutes: _now.minute) -
-          Duration(milliseconds: _now.millisecond);
+      // _hoursController.duration = Duration(minutes: 60) -
+      //     // Duration(minutes: _now.minute) -
+      //     Duration(milliseconds: _now.millisecond);
 
-      _24hoursController.duration = Duration(hours: 12) -
-          // Duration(minutes: _now.minute) -
-          Duration(milliseconds: _now.millisecond);
-
+      // _hours24Controller.duration = Duration(hours: 24) -
+      //     // Duration(minutes: _now.minute) -
+      //     Duration(milliseconds: _now.millisecond);
+      // debugPrint('hour ${_now.hour}');
       if (_now.second == 0) {
         _minutesController.forward(from: 0.0);
       }
@@ -152,8 +148,8 @@ class _AnalogClockState extends State<AnalogClock>
         _hoursController.forward(from: 0.0);
       }
 
-      if (_now.second == 0 && _now.minute == 0 && _now.hour == 12) {
-        _24hoursController.forward(from: 0.0);
+      if (_now.second == 0 && _now.minute == 0 && _now.hour == 24) {
+        _hours24Controller.forward(from: 0.0);
       }
 
       _timer = Timer(
@@ -224,16 +220,18 @@ class _AnalogClockState extends State<AnalogClock>
                   customTheme: customTheme,
                 ),
                 OffCenterCircleHands(
-                    customTheme: customTheme,
-                    now: _now,
-                    minutesController: _minutesController,
-                    hoursController: _hoursController),
+                  customTheme: customTheme,
+                  now: _now,
+                  minutesController: _minutesController,
+                  hoursController: _hoursController,
+                  hours24Controller: _hours24Controller,
+                ),
                 ClockHands(
                   customTheme: customTheme,
                   now: _now,
                   is24HourFormat: widget.model.is24HourFormat,
                   hoursController: _hoursController,
-                  hoursController24: _24hoursController,
+                  hours24Controller: _hours24Controller,
                   minutesController: _minutesController,
                   secondsController: _secondsController,
                 ),

@@ -9,12 +9,12 @@ class ClockHands extends StatelessWidget {
     @required DateTime now,
     @required bool is24HourFormat,
     @required AnimationController hoursController,
-    @required AnimationController hoursController24,
+    @required AnimationController hours24Controller,
     @required AnimationController minutesController,
     @required AnimationController secondsController,
   })  : _now = now,
         _hoursController = hoursController,
-        _24hoursController = hoursController24,
+        _hours24Controller = hours24Controller,
         _is24HourFormat = is24HourFormat,
         _minutesController = minutesController,
         _secondsController = secondsController,
@@ -24,7 +24,7 @@ class ClockHands extends StatelessWidget {
   final ThemeData customTheme;
   final DateTime _now;
   final AnimationController _hoursController;
-  final AnimationController _24hoursController;
+  final AnimationController _hours24Controller;
   final AnimationController _minutesController;
   final AnimationController _secondsController;
 
@@ -50,7 +50,7 @@ class ClockHands extends StatelessWidget {
           fillColor: customTheme.backgroundColor,
           textColor: customTheme.errorColor,
           thickness: 2.2,
-          size: 0.88,
+          size: 0.87,
           handHeadRadius: 0.088,
           angleRadians: _now.minute * radiansPerTick,
           now: _now.minute,
@@ -59,6 +59,7 @@ class ClockHands extends StatelessWidget {
           fullRotationController: _hoursController,
         ),
         DrawnHandWithProgress(
+          isHourHand: true,
           bodyColor: customTheme.accentColor,
           fillColor: customTheme.backgroundColor,
           textColor: customTheme.errorColor,
@@ -71,7 +72,7 @@ class ClockHands extends StatelessWidget {
               ? '${_now.hour}'
               : _now.hour > 12 ? '${_now.hour - 12}' : '${_now.hour}',
           progressController: _hoursController,
-          fullRotationController: _24hoursController,
+          fullRotationController: _hours24Controller,
         ),
       ],
     );

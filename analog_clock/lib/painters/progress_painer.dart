@@ -78,6 +78,7 @@ class HandProgressPainter extends CustomPainter {
           getRadius(size, handHeadRadius) +
           (1 - handSize) * size.shortestSide,
     );
+    // debugPrint('now $now, value $value');
     canvas.rotate(-now * vm.radians(360 / 60));
 
     final Rect rect = Rect.fromLTWH(

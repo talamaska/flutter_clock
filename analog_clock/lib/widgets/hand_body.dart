@@ -17,8 +17,10 @@ class HandBody extends StatefulWidget {
     @required this.now,
     @required this.progressController,
     @required this.fullRotationController,
+    this.isHourHand = false,
   });
 
+  final bool isHourHand;
   final Color bodyColor;
   final Color fillColor;
   final double size;
@@ -37,16 +39,19 @@ class HandBody extends StatefulWidget {
 class _HandBodyState extends State<HandBody> {
   Animation<double> _handAnimation;
   Animation<double> _rotationAnimation;
+  double _rotationDegrees;
   @override
   void initState() {
     super.initState();
+    _rotationDegrees = widget.isHourHand ? 720 : 360;
     _handAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
       CurvedAnimation(
         parent: widget.progressController,
         curve: Curves.linear,
       ),
     );
-    _rotationAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
+    _rotationAnimation =
+        Tween<double>(begin: 0.0, end: _rotationDegrees).animate(
       CurvedAnimation(
         parent: widget.fullRotationController,
         curve: Curves.linear,
@@ -67,9 +72,12 @@ class _HandBodyState extends State<HandBody> {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint('${_rotationAnimation.value}');
+    if (widget.isHourHand) {
+      // debugPrint();
+      // debugPrint('${_rotationAnimation.value}');
+    }
     return Transform.rotate(
-      angle: radians(_rotationAnimation.value),
+      angle: widget.angleRadians,
       child: CustomPaint(
         painter: HandPainter(
           color: widget.bodyColor,

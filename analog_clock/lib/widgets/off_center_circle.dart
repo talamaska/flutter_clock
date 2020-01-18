@@ -23,6 +23,8 @@ class OffCenterCircle extends Hand {
     @required this.now,
     @required this.text,
     @required this.progressController,
+    @required this.rotationController,
+    this.isHourHand = false,
   })  : assert(borderColor != null),
         assert(fillColor != null),
         assert(thickness != null),
@@ -41,30 +43,31 @@ class OffCenterCircle extends Hand {
         );
 
   /// How thick the hand should be drawn, in logical pixels.
+  final bool isHourHand;
   final double offCenter;
   final double thickness;
   final String text;
   final int now;
   final AnimationController progressController;
+  final AnimationController rotationController;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox.expand(
-        child: Transform.rotate(
-          angle: angleRadians,
-          child: HandBodyCircle(
-            borderColor: bodyColor,
-            fillColor: fillColor,
-            thickness: thickness,
-            size: size,
-            offCenter: offCenter,
-            angleRadians: angleRadians,
-            handHeadRadius: handHeadRadius,
-            now: now,
-            text: text,
-            progressController: progressController,
-          ),
+        child: HandBodyCircle(
+          borderColor: bodyColor,
+          fillColor: fillColor,
+          thickness: thickness,
+          size: size,
+          offCenter: offCenter,
+          angleRadians: angleRadians,
+          handHeadRadius: handHeadRadius,
+          now: now,
+          text: text,
+          progressController: progressController,
+          rotationController: rotationController,
+          isHourHand: isHourHand,
         ),
       ),
     );

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:analog_clock/hand_body_circle.dart';
+import 'package:analog_clock/widgets/hand_body_circle.dart';
 import 'package:flutter/material.dart';
 import 'hand.dart';
 
@@ -22,9 +22,9 @@ class OffCenterCircle extends Hand {
     @required this.thickness,
     @required this.now,
     @required this.text,
-    // @required this.value,
-    @required this.numbersController,
     @required this.progressController,
+    @required this.rotationController,
+    this.isHourHand = false,
   })  : assert(borderColor != null),
         assert(fillColor != null),
         assert(thickness != null),
@@ -43,32 +43,31 @@ class OffCenterCircle extends Hand {
         );
 
   /// How thick the hand should be drawn, in logical pixels.
+  final bool isHourHand;
   final double offCenter;
   final double thickness;
   final String text;
   final int now;
-  final AnimationController numbersController;
   final AnimationController progressController;
+  final AnimationController rotationController;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox.expand(
-        child: Transform.rotate(
-          angle: angleRadians,
-          child: HandBodyCircle(
-            borderColor: bodyColor,
-            fillColor: fillColor,
-            thickness: thickness,
-            size: size,
-            offCenter: offCenter,
-            angleRadians: angleRadians,
-            handHeadRadius: handHeadRadius,
-            now: now,
-            text: text,
-            numbersController: numbersController,
-            progressController: progressController,
-          ),
+        child: HandBodyCircle(
+          borderColor: bodyColor,
+          fillColor: fillColor,
+          thickness: thickness,
+          size: size,
+          offCenter: offCenter,
+          angleRadians: angleRadians,
+          handHeadRadius: handHeadRadius,
+          now: now,
+          text: text,
+          progressController: progressController,
+          rotationController: rotationController,
+          isHourHand: isHourHand,
         ),
       ),
     );

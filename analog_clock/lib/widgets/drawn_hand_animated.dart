@@ -1,8 +1,8 @@
 // Copyright 2019 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:analog_clock/hand_body_widget.dart';
-import 'package:analog_clock/hand_progress_widget.dart';
+import 'package:analog_clock/widgets/hand_body.dart';
+import 'package:analog_clock/widgets/hand_progress.dart';
 import 'package:flutter/material.dart';
 import 'hand.dart';
 
@@ -22,16 +22,16 @@ class DrawnHandWithProgress extends Hand {
     @required this.thickness,
     @required this.now,
     @required this.text,
-    // @required this.value,
-    @required this.numbersController,
     @required this.progressController,
+    @required this.fullRotationController,
+    this.isHourHand = false,
   })  : assert(bodyColor != null),
         assert(fillColor != null),
-        assert(textColor != null),
-        assert(thickness != null),
         assert(size != null),
         assert(angleRadians != null),
         assert(handHeadRadius != null),
+        assert(textColor != null),
+        assert(thickness != null),
         assert(now != null),
         assert(text != null),
         super(
@@ -47,38 +47,36 @@ class DrawnHandWithProgress extends Hand {
   final Color textColor;
   final String text;
   final int now;
-  final AnimationController numbersController;
+  final bool isHourHand;
   final AnimationController progressController;
+  final AnimationController fullRotationController;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox.expand(
-        child: Transform.rotate(
-          angle: angleRadians,
-          child: HandBody(
-            bodyColor: bodyColor,
-            fillColor: fillColor,
+        child: HandBody(
+          isHourHand: isHourHand,
+          bodyColor: bodyColor,
+          fillColor: fillColor,
+          thickness: thickness,
+          size: size,
+          angleRadians: angleRadians,
+          handHeadRadius: handHeadRadius,
+          progressController: progressController,
+          fullRotationController: fullRotationController,
+          child: HandProgress(
+            isHourHand: isHourHand,
+            color: bodyColor,
+            circleColor: fillColor,
+            textColor: textColor,
             thickness: thickness,
-            size: size,
+            handSize: size,
+            now: now,
             angleRadians: angleRadians,
             handHeadRadius: handHeadRadius,
-            now: now,
-            text: text,
-            numbersController: numbersController,
             progressController: progressController,
-            child: HandProgress(
-              color: bodyColor,
-              circleColor: fillColor,
-              textColor: textColor,
-              thickness: thickness,
-              handSize: size,
-              handHeadRadius: handHeadRadius,
-              now: now,
-              text: text,
-              numbersController: numbersController,
-              progressController: progressController,
-            ),
+            fullRotationController: fullRotationController,
           ),
         ),
       ),

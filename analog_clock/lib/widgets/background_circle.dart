@@ -2,14 +2,14 @@ import 'package:flutter/material.dart' show Colors;
 import 'package:flutter/widgets.dart';
 import 'package:vector_math/vector_math.dart' as vm;
 
-class BackgroundAnimated extends StatefulWidget {
+class BackgroundCircle extends StatefulWidget {
   final AnimationController controller;
   final Color color;
   final double radius;
   final Offset circleOffset;
   final Offset rotationOffset;
 
-  BackgroundAnimated({
+  BackgroundCircle({
     this.controller,
     this.color,
     this.radius,
@@ -22,10 +22,10 @@ class BackgroundAnimated extends StatefulWidget {
         assert(rotationOffset != null);
 
   @override
-  _BackgroundAnimatedState createState() => _BackgroundAnimatedState();
+  _BackgroundCircleState createState() => _BackgroundCircleState();
 }
 
-class _BackgroundAnimatedState extends State<BackgroundAnimated> {
+class _BackgroundCircleState extends State<BackgroundCircle> {
   Animation<double> _handAnimation;
   @override
   void initState() {

@@ -1,24 +1,18 @@
-import 'package:analog_clock/progress_painer.dart';
+import 'package:analog_clock/painters/progress_painer.dart';
 import 'package:flutter/widgets.dart';
 
 class HandProgress extends StatefulWidget {
+  final bool isHourHand;
   final Color color;
   final Color circleColor;
   final Color textColor;
   final double thickness;
   final double handSize;
   final double handHeadRadius;
-  // final double value;
-  final String text;
+  final double angleRadians;
   final int now;
   final AnimationController progressController;
-  final AnimationController numbersController;
-
-  // static const _secondTextStyle = TextStyle(
-  //   color: Colors.red,
-  //   fontSize: 10,
-  //   fontWeight: FontWeight.bold,
-  // );
+  final AnimationController fullRotationController;
 
   HandProgress({
     @required this.color,
@@ -27,17 +21,19 @@ class HandProgress extends StatefulWidget {
     @required this.handSize,
     @required this.thickness,
     @required this.handHeadRadius,
-    // @required this.value,
-    @required this.now,
-    @required this.text,
-    @required this.numbersController,
+    @required this.angleRadians,
     @required this.progressController,
+    @required this.fullRotationController,
+    @required this.now,
+    this.isHourHand = false,
   })  : assert(color != null),
-        assert(numbersController != null),
         assert(progressController != null),
+        assert(fullRotationController != null),
+        assert(now != null),
         assert(circleColor != null),
         assert(textColor != null),
         assert(thickness != null),
+        assert(angleRadians != null),
         assert(handHeadRadius != null),
         assert(handSize != null),
         assert(handSize >= 0.0),
@@ -47,13 +43,13 @@ class HandProgress extends StatefulWidget {
 }
 
 class _HandProgressState extends State<HandProgress> {
-  Animation<double> _scaleAnimation;
-  Animation<double> _opacityAnimation;
   Animation<double> _progressAnimation;
+  Animation<double> _rotationAnimation;
 
   @override
   void initState() {
     super.initState();
+
     _progressAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
       CurvedAnimation(
         parent: widget.progressController,
@@ -61,30 +57,26 @@ class _HandProgressState extends State<HandProgress> {
       ),
     );
 
-    // _scaleAnimation = Tween<double>(begin: 1.0, end: 5.0).animate(
-    //   CurvedAnimation(
-    //     parent: widget.numbersController,
-    //     curve: Curves.easeInOut,
-    //   ),
-    // );
-    // _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-    //   CurvedAnimation(
-    //     parent: widget.numbersController,
-    //     curve: Curves.easeInOut,
-    //   ),
-    // );
-
     _progressAnimation.addListener(() {
       if (mounted) {
         setState(() {});
       }
     });
-    // _scaleAnimation.addListener(() {
-    //   setState(() {});
-    // });
-    // _opacityAnimation.addListener(() {
-    //   setState(() {});
-    // });
+    final _rotationDegrees = widget.isHourHand ? 720.0 : 360.0;
+
+    _rotationAnimation =
+        Tween<double>(begin: 0.0, end: _rotationDegrees).animate(
+      CurvedAnimation(
+        parent: widget.fullRotationController,
+        curve: Curves.linear,
+      ),
+    );
+
+    _rotationAnimation.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -94,6 +86,9 @@ class _HandProgressState extends State<HandProgress> {
 
   @override
   Widget build(BuildContext context) {
+    // if (widget.isHourHand) {
+    //   debugPrint('test ${_rotationAnimation.value}');
+    // }
     return CustomPaint(
       painter: HandProgressPainter(
         color: widget.color,
@@ -103,10 +98,9 @@ class _HandProgressState extends State<HandProgress> {
         handSize: widget.handSize,
         handHeadRadius: widget.handHeadRadius,
         value: _progressAnimation.value,
+        isHourHand: widget.isHourHand,
+        rotation: _rotationAnimation.value,
         now: widget.now,
-        text: widget.text,
-        // scale: _scaleAnimation.value,
-        // opacity: _opacityAnimation.value,
       ),
     );
   }

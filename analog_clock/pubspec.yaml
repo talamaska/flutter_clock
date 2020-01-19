@@ -11,10 +11,6 @@ dependencies:
   flutter_clock_helper:
     path: ../flutter_clock_helper
   cupertino_icons: ^0.1.2
-  # path provider is throwing error of using deprecated android api, I'm on latest stable branch
-  # path_provider: 1.5.1 
-  # the package is not even trying to read local files, so I had to include the google fonts manually
-  # google_fonts: ^0.3.2
   flare_flutter: 2.0.1
   vector_math: 2.0.8
 
@@ -26,15 +22,9 @@ flutter:
   uses-material-design: true
 
   assets:
-
-    # - google_fonts/ 
     - assets/animations/
 
   fonts:
-    - family: AnalogClock
-      fonts:
-        - asset: fonts/AnalogClock.ttf
-        
     - family: Comfortaa
       fonts:
         - asset: fonts/Comfortaa-Regular.ttf

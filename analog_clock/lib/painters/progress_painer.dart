@@ -13,7 +13,7 @@ class HandProgressPainter extends CustomPainter {
   final double rotation;
   final bool isHourHand;
   final Paint progressPaint;
-  final Paint innerCirclePaint;
+  final int now;
 
   HandProgressPainter({
     @required this.color,
@@ -23,6 +23,7 @@ class HandProgressPainter extends CustomPainter {
     @required this.thickness,
     @required this.handHeadRadius,
     @required this.value,
+    @required this.now,
     @required this.rotation,
     this.isHourHand = false,
   })  : assert(color != null),
@@ -30,6 +31,8 @@ class HandProgressPainter extends CustomPainter {
         assert(textColor != null),
         assert(thickness != null),
         assert(handHeadRadius != null),
+        assert(now != null),
+        assert(rotation != null),
         assert(handSize != null),
         assert(handSize >= 0.0),
         assert(handSize <= 1.0),
@@ -37,13 +40,8 @@ class HandProgressPainter extends CustomPainter {
           ..color = circleColor
           ..strokeWidth = thickness
           ..isAntiAlias = true
-          ..strokeCap = StrokeCap.butt,
-        innerCirclePaint = Paint()
-          ..color = circleColor
-          ..strokeWidth = 1
-          ..isAntiAlias = true
-          ..style = PaintingStyle.fill
-          ..strokeCap = StrokeCap.butt;
+          ..strokeCap = StrokeCap.butt
+          ..isAntiAlias = true;
 
   double getRadius(Size size, kRadius) {
     return (size.shortestSide / 2) * kRadius;
@@ -59,10 +57,9 @@ class HandProgressPainter extends CustomPainter {
           getRadius(size, handHeadRadius) +
           (1 - handSize) * size.shortestSide,
     );
-    // if (isHourHand) {
-    //   debugPrint('now $rotation');
-    // }
+
     canvas.rotate(vm.radians(-rotation));
+    // canvas.rotate(-now * vm.radians(360 / 60));
 
     final Rect rect = Rect.fromLTWH(
       -getRadius(size, handHeadRadius),
@@ -98,7 +95,8 @@ class HandProgressPainter extends CustomPainter {
         oldDelegate.thickness != thickness ||
         oldDelegate.handSize != handSize ||
         oldDelegate.handHeadRadius != handHeadRadius ||
-        oldDelegate.rotation != rotation ||
+        oldDelegate.now != now ||
+        // oldDelegate.rotation != rotation ||
         oldDelegate.value != value;
   }
 }

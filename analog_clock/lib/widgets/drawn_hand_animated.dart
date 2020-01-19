@@ -46,7 +46,7 @@ class DrawnHandWithProgress extends Hand {
   final double thickness;
   final Color textColor;
   final String text;
-  final double now;
+  final int now;
   final bool isHourHand;
   final AnimationController progressController;
   final AnimationController fullRotationController;
@@ -72,9 +72,11 @@ class DrawnHandWithProgress extends Hand {
             textColor: textColor,
             thickness: thickness,
             handSize: size,
+            now: now,
+            angleRadians: angleRadians,
             handHeadRadius: handHeadRadius,
             progressController: progressController,
-            rotationController: fullRotationController,
+            fullRotationController: fullRotationController,
           ),
         ),
       ),

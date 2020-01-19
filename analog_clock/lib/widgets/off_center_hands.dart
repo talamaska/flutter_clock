@@ -1,4 +1,4 @@
-import 'package:analog_clock/helpers.dart';
+import 'package:analog_clock/utils/helpers.dart';
 import 'package:analog_clock/widgets/off_center_circle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';

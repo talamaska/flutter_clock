@@ -9,9 +9,10 @@ class HandProgress extends StatefulWidget {
   final double thickness;
   final double handSize;
   final double handHeadRadius;
-
+  final double angleRadians;
+  final int now;
   final AnimationController progressController;
-  final AnimationController rotationController;
+  final AnimationController fullRotationController;
 
   HandProgress({
     @required this.color,
@@ -20,15 +21,19 @@ class HandProgress extends StatefulWidget {
     @required this.handSize,
     @required this.thickness,
     @required this.handHeadRadius,
+    @required this.angleRadians,
     @required this.progressController,
-    @required this.rotationController,
+    @required this.fullRotationController,
+    @required this.now,
     this.isHourHand = false,
   })  : assert(color != null),
         assert(progressController != null),
-        assert(rotationController != null),
+        assert(fullRotationController != null),
+        assert(now != null),
         assert(circleColor != null),
         assert(textColor != null),
         assert(thickness != null),
+        assert(angleRadians != null),
         assert(handHeadRadius != null),
         assert(handSize != null),
         assert(handSize >= 0.0),
@@ -44,7 +49,7 @@ class _HandProgressState extends State<HandProgress> {
   @override
   void initState() {
     super.initState();
-    final double rotationDegrees = widget.isHourHand ? 720 : 360;
+
     _progressAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
       CurvedAnimation(
         parent: widget.progressController,
@@ -57,11 +62,12 @@ class _HandProgressState extends State<HandProgress> {
         setState(() {});
       }
     });
+    final _rotationDegrees = widget.isHourHand ? 720.0 : 360.0;
 
     _rotationAnimation =
-        Tween<double>(begin: 0.0, end: rotationDegrees).animate(
+        Tween<double>(begin: 0.0, end: _rotationDegrees).animate(
       CurvedAnimation(
-        parent: widget.rotationController,
+        parent: widget.fullRotationController,
         curve: Curves.linear,
       ),
     );
@@ -94,6 +100,7 @@ class _HandProgressState extends State<HandProgress> {
         value: _progressAnimation.value,
         isHourHand: widget.isHourHand,
         rotation: _rotationAnimation.value,
+        now: widget.now,
       ),
     );
   }

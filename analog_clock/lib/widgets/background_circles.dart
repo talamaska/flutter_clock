@@ -20,14 +20,14 @@ class BackgroundCircles extends StatelessWidget {
         BackgroundCircle(
           controller: _minutesController,
           color: customTheme.canvasColor,
-          circleOffset: Offset(0, 0.09),
+          circleOffset: Offset(0, 0.03),
           rotationOffset: Offset(-0.05, 0.1),
           radius: 0.36,
         ),
         BackgroundCircle(
           controller: _minutesController,
           color: customTheme.canvasColor,
-          circleOffset: Offset(1, -0.09),
+          circleOffset: Offset(1, -0.03),
           rotationOffset: Offset(1.08, 0.5),
           radius: 0.21,
         ),

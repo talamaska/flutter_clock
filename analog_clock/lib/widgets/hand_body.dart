@@ -69,10 +69,10 @@ class _HandBodyState extends State<HandBody> {
   @override
   Widget build(BuildContext context) {
     if (widget.isHourHand) {
-      // debugPrint();
       // debugPrint('${_rotationAnimation.value}');
     }
     return Transform.rotate(
+      // angle: widget.angleRadians,
       angle: radians(_rotationAnimation.value),
       child: CustomPaint(
         painter: HandPainter(

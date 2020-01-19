@@ -33,11 +33,13 @@ class HandCirclePainter extends CustomPainter {
     final linePaint = Paint()
       ..color = borderColor.withOpacity(0)
       ..strokeWidth = 0
+      ..isAntiAlias = true
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
     final circlePaint = Paint()
       ..color = fillColor
       ..strokeWidth = 0
+      ..isAntiAlias = true
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.butt;
 
@@ -59,6 +61,7 @@ class HandCirclePainter extends CustomPainter {
     return oldDelegate.borderColor != borderColor ||
         oldDelegate.fillColor != fillColor ||
         oldDelegate.thickness != thickness ||
+        oldDelegate.offCenter != offCenter ||
         oldDelegate.handSize != handSize;
   }
 }

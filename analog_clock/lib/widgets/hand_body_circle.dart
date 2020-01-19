@@ -31,8 +31,8 @@ class HandBodyCircle extends StatefulWidget {
   final String text;
   final int now;
 
-  final AnimationController rotationController;
   final AnimationController progressController;
+  final AnimationController rotationController;
 
   @override
   _HandBodyCircleState createState() => _HandBodyCircleState();
@@ -77,6 +77,7 @@ class _HandBodyCircleState extends State<HandBodyCircle> {
   Widget build(BuildContext context) {
     return Transform.rotate(
       angle: radians(_rotationAnimation.value),
+      // angle: widget.angleRadians,
       child: CustomPaint(
         painter: HandCirclePainter(
           borderColor: widget.borderColor,

@@ -1,86 +1,95 @@
-import 'package:flutter/widgets.dart';
-import 'package:vector_math/vector_math.dart' as vm;
+import 'package:flutter/material.dart';
 
 class NumbersPainter extends CustomPainter {
   final Color color;
-  final double scale;
-  final double opacity;
-  final String text;
-  final double thickness;
-  final double handSize;
-  final double handHeadRadius;
-  final int now;
+  final ThemeData customTheme;
 
   NumbersPainter({
-    this.scale,
-    this.opacity,
-    this.text,
-    this.color,
-    this.now,
-    @required this.handSize,
-    @required this.thickness,
-    @required this.handHeadRadius,
-  });
+    Key key,
+    @required this.customTheme,
+    @required this.color,
+  }) : super();
 
   @override
   void paint(Canvas canvas, Size size) {
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color.withOpacity(opacity),
-          fontSize: handHeadRadius * 2 * 0.6 * scale,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr,
+    final center = (Offset.zero & size).center;
+    final TextStyle textStyle = customTheme.textTheme.body2.copyWith(
+      color: customTheme.accentColor,
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
     );
 
-    canvas.save();
-
-    // debugPrint('$test');
-    // canvas.translate(size.longestSide / 2, thickness + handHeadRadius * 2);
-    // canvas.translate(
-    //   size.longestSide / 2,
-    //   thickness + handHeadRadius + (1 - handSize) * size.shortestSide,
-    // );
-    canvas.rotate(-now * vm.radians(360 / 60));
-
-    // hand head
-    textPainter.layout(
-      minWidth: size.width,
+    final textPainter3 = TextPainter(
+      text: TextSpan(
+        text: '3',
+        style: textStyle,
+      ),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+    );
+    textPainter3.layout(
+      minWidth: 16,
       maxWidth: size.width,
     );
-
-    final offset = Offset(
-      -handHeadRadius,
-      -handHeadRadius + handHeadRadius * 0.3,
+    textPainter3.paint(
+      canvas,
+      Offset(center.dx + size.shortestSide / 2 - 3, center.dy - 8),
     );
-    textPainter.paint(canvas, offset);
-    canvas.rotate(vm.radians(270));
 
-    // canvas.translate(size.longestSide / 2, thickness + handHeadRadius * 2);
-    // canvas.translate(
-    //   -size.longestSide / 2,
-    //   -thickness + handHeadRadius + (1 - handSize) * size.shortestSide,
-    // );
+    final textPainter9 = TextPainter(
+      text: TextSpan(
+        text: '9',
+        style: textStyle,
+      ),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+    );
+    textPainter9.layout(
+      minWidth: 16,
+      maxWidth: size.width,
+    );
+    textPainter9.paint(
+      canvas,
+      Offset(center.dx - size.shortestSide / 2 - 13, center.dy - 8),
+    );
 
-    // canvas.restore();
-    canvas.restore();
-    // canvas.scale(scale);
-    // debugPrint('scale $scale');
+    final textPainter12 = TextPainter(
+      text: TextSpan(
+        text: '12',
+        style: textStyle,
+      ),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+    );
+    textPainter12.layout(
+      minWidth: 16,
+      maxWidth: size.width,
+    );
+    textPainter12.paint(
+      canvas,
+      Offset(center.dx - 8, center.dy - size.shortestSide / 2 - 12),
+    );
+
+    final textPainter6 = TextPainter(
+      text: TextSpan(
+        text: '6',
+        style: textStyle,
+      ),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+    );
+    textPainter6.layout(
+      minWidth: 16,
+      maxWidth: size.width,
+    );
+    textPainter6.paint(
+      canvas,
+      Offset(center.dx - 8, center.dy + size.shortestSide / 2 - 3),
+    );
   }
 
   @override
   bool shouldRepaint(NumbersPainter oldDelegate) {
-    // TODO: implement shouldRepaint
-    return oldDelegate.color != color ||
-        oldDelegate.thickness != thickness ||
-        oldDelegate.handSize != handSize ||
-        oldDelegate.scale != scale ||
-        oldDelegate.opacity != opacity ||
-        oldDelegate.text != text ||
-        oldDelegate.handHeadRadius != handHeadRadius;
+    return oldDelegate.color != color || oldDelegate.customTheme != customTheme;
   }
 }

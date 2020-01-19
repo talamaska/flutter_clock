@@ -7,10 +7,6 @@ class HandCirclePainter extends CustomPainter {
   final double thickness;
   final double handSize;
   final double offCenter;
-  final double handHeadRadius;
-  final double value;
-  final String text;
-  final int now;
 
   HandCirclePainter({
     @required this.borderColor,
@@ -18,14 +14,9 @@ class HandCirclePainter extends CustomPainter {
     @required this.handSize,
     @required this.offCenter,
     @required this.thickness,
-    @required this.handHeadRadius,
-    @required this.value,
-    @required this.now,
-    @required this.text,
   })  : assert(borderColor != null),
         assert(fillColor != null),
         assert(thickness != null),
-        assert(handHeadRadius != null),
         assert(offCenter != null),
         assert(handSize != null),
         assert(handSize >= 0.0),
@@ -37,20 +28,11 @@ class HandCirclePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // final shadow = BoxShadow(
-    //   blurRadius: 5,
-    //   color: Colors.black12,
-    //   offset: Offset(2, 2),
-    //   spreadRadius: 1,
-    // );
-    // final paintS = shadow.toPaint();
-    // canvas.drawPaint(paintS);
-
     final center = (Offset.zero & size).center;
 
     final linePaint = Paint()
-      ..color = borderColor
-      ..strokeWidth = 3
+      ..color = borderColor.withOpacity(0)
+      ..strokeWidth = 0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
     final circlePaint = Paint()
@@ -77,10 +59,6 @@ class HandCirclePainter extends CustomPainter {
     return oldDelegate.borderColor != borderColor ||
         oldDelegate.fillColor != fillColor ||
         oldDelegate.thickness != thickness ||
-        oldDelegate.handSize != handSize ||
-        oldDelegate.now != now ||
-        oldDelegate.value != value ||
-        oldDelegate.text != text ||
-        oldDelegate.handHeadRadius != handHeadRadius;
+        oldDelegate.handSize != handSize;
   }
 }

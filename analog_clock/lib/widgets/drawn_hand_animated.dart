@@ -46,7 +46,7 @@ class DrawnHandWithProgress extends Hand {
   final double thickness;
   final Color textColor;
   final String text;
-  final int now;
+  final double now;
   final bool isHourHand;
   final AnimationController progressController;
   final AnimationController fullRotationController;
@@ -63,51 +63,18 @@ class DrawnHandWithProgress extends Hand {
           size: size,
           angleRadians: angleRadians,
           handHeadRadius: handHeadRadius,
-          now: now,
-          text: text,
           progressController: progressController,
           fullRotationController: fullRotationController,
           child: HandProgress(
+            isHourHand: isHourHand,
             color: bodyColor,
             circleColor: fillColor,
             textColor: textColor,
             thickness: thickness,
             handSize: size,
             handHeadRadius: handHeadRadius,
-            now: now,
-            text: text,
             progressController: progressController,
             rotationController: fullRotationController,
-          ),
-        ),
-      ),
-    );
-
-    return Center(
-      child: SizedBox.expand(
-        child: Transform.rotate(
-          angle: angleRadians,
-          child: HandBody(
-            bodyColor: bodyColor,
-            fillColor: fillColor,
-            thickness: thickness,
-            size: size,
-            angleRadians: angleRadians,
-            handHeadRadius: handHeadRadius,
-            now: now,
-            text: text,
-            progressController: progressController,
-            child: HandProgress(
-              color: bodyColor,
-              circleColor: fillColor,
-              textColor: textColor,
-              thickness: thickness,
-              handSize: size,
-              handHeadRadius: handHeadRadius,
-              now: now,
-              text: text,
-              progressController: progressController,
-            ),
           ),
         ),
       ),

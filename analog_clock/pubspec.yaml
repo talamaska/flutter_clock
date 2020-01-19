@@ -31,3 +31,13 @@ flutter:
     - family: AnalogClock
       fonts:
         - asset: fonts/AnalogClock.ttf
+        
+    - family: Comfortaa
+      fonts:
+        - asset: fonts/Comfortaa-Regular.ttf
+          weight: 400
+
+    - family: Amarante
+      fonts:
+        - asset: fonts/Amarante-Regular.ttf
+          weight: 400

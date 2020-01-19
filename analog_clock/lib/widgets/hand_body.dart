@@ -1,4 +1,3 @@
-import 'package:analog_clock/helpers.dart';
 import 'package:analog_clock/painters/hand_painter.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vector_math/vector_math.dart';
@@ -13,8 +12,6 @@ class HandBody extends StatefulWidget {
     @required this.angleRadians,
     @required this.handHeadRadius,
     @required this.thickness,
-    @required this.text,
-    @required this.now,
     @required this.progressController,
     @required this.fullRotationController,
     this.isHourHand = false,
@@ -27,8 +24,7 @@ class HandBody extends StatefulWidget {
   final double angleRadians;
   final double handHeadRadius;
   final double thickness;
-  final String text;
-  final int now;
+
   final AnimationController progressController;
   final AnimationController fullRotationController;
 
@@ -77,7 +73,7 @@ class _HandBodyState extends State<HandBody> {
       // debugPrint('${_rotationAnimation.value}');
     }
     return Transform.rotate(
-      angle: widget.angleRadians,
+      angle: radians(_rotationAnimation.value),
       child: CustomPaint(
         painter: HandPainter(
           color: widget.bodyColor,
@@ -85,8 +81,6 @@ class _HandBodyState extends State<HandBody> {
           handSize: widget.size,
           handHeadRadius: widget.handHeadRadius,
           value: _handAnimation.value,
-          now: widget.now,
-          text: widget.text,
         ),
         child: widget.child,
       ),

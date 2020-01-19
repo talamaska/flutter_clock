@@ -28,8 +28,8 @@ class OffCenterCircleHands extends StatelessWidget {
     return Stack(
       children: <Widget>[
         OffCenterCircle(
-          borderColor: customTheme.accentColor.withOpacity(0.3),
-          fillColor: customTheme.backgroundColor,
+          borderColor: customTheme.accentColor,
+          fillColor: customTheme.cardColor,
           thickness: 4,
           size: 0.70,
           offCenter: 0.08,
@@ -42,8 +42,8 @@ class OffCenterCircleHands extends StatelessWidget {
         ),
         OffCenterCircle(
           isHourHand: true,
-          borderColor: customTheme.accentColor.withOpacity(0.3),
-          fillColor: customTheme.highlightColor.withOpacity(0.15),
+          borderColor: customTheme.accentColor,
+          fillColor: customTheme.highlightColor,
           thickness: 4,
           size: 0.28,
           offCenter: 0.19,

@@ -1,4 +1,3 @@
-import 'package:analog_clock/analog_clock_icons.dart';
 import 'package:flare_flutter/flare.dart';
 import 'package:flare_flutter/flare_controller.dart';
 import 'package:flutter/material.dart';
@@ -46,12 +45,12 @@ class _ClockTextsState extends State<ClockTexts> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Container(
-                height: 80,
+                height: 60,
                 width: 80,
                 child: FlareActor(
                   "assets/animations/${widget._condition}.flr",
                   animation: 'loop',
-                  color: widget.customTheme.primaryColor,
+                  color: widget.customTheme.accentColor,
                   fit: BoxFit.cover,
                   controller: _loopController,
                 ),
@@ -59,8 +58,8 @@ class _ClockTextsState extends State<ClockTexts> {
               RichText(
                 text: TextSpan(
                   text: widget._temperature,
-                  style: widget.customTheme.primaryTextTheme.body2.copyWith(
-                    color: widget.customTheme.primaryColor,
+                  style: widget.customTheme.textTheme.body1.copyWith(
+                    color: widget.customTheme.accentColor,
                     fontSize: 24,
                   ),
                 ),
@@ -78,8 +77,8 @@ class _ClockTextsState extends State<ClockTexts> {
                 child: Text(
                   widget._temperatureHigh,
                   textAlign: TextAlign.right,
-                  style: widget.customTheme.primaryTextTheme.body1.copyWith(
-                    color: Colors.red,
+                  style: widget.customTheme.textTheme.body1.copyWith(
+                    color: widget.customTheme.accentColor,
                     fontSize: 24,
                   ),
                 ),
@@ -89,8 +88,8 @@ class _ClockTextsState extends State<ClockTexts> {
                 child: Text(
                   widget._temperatureLow,
                   textAlign: TextAlign.right,
-                  style: widget.customTheme.primaryTextTheme.body1.copyWith(
-                    color: Colors.blue,
+                  style: widget.customTheme.textTheme.body1.copyWith(
+                    color: widget.customTheme.buttonColor,
                     fontSize: 24,
                   ),
                 ),
@@ -99,16 +98,19 @@ class _ClockTextsState extends State<ClockTexts> {
           ),
         ),
         Positioned(
-            bottom: 0,
-            left: 0,
-            child: Text(
-              widget._location,
-              textAlign: TextAlign.right,
-              style: widget.customTheme.primaryTextTheme.body1.copyWith(
-                color: widget.customTheme.primaryColor,
-                fontSize: 14,
-              ),
-            ))
+          bottom: 0,
+          left: 0,
+          width: 120,
+          child: Text(
+            widget._location,
+            maxLines: 3,
+            textAlign: TextAlign.left,
+            style: widget.customTheme.textTheme.body1.copyWith(
+              color: widget.customTheme.primaryColor,
+              fontSize: 14,
+            ),
+          ),
+        )
       ],
     );
   }

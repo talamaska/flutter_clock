@@ -9,8 +9,7 @@ class HandProgress extends StatefulWidget {
   final double thickness;
   final double handSize;
   final double handHeadRadius;
-  final String text;
-  final int now;
+
   final AnimationController progressController;
   final AnimationController rotationController;
 
@@ -21,9 +20,6 @@ class HandProgress extends StatefulWidget {
     @required this.handSize,
     @required this.thickness,
     @required this.handHeadRadius,
-    // @required this.value,
-    @required this.now,
-    @required this.text,
     @required this.progressController,
     @required this.rotationController,
     this.isHourHand = false,
@@ -84,6 +80,9 @@ class _HandProgressState extends State<HandProgress> {
 
   @override
   Widget build(BuildContext context) {
+    // if (widget.isHourHand) {
+    //   debugPrint('test ${_rotationAnimation.value}');
+    // }
     return CustomPaint(
       painter: HandProgressPainter(
         color: widget.color,
@@ -93,11 +92,8 @@ class _HandProgressState extends State<HandProgress> {
         handSize: widget.handSize,
         handHeadRadius: widget.handHeadRadius,
         value: _progressAnimation.value,
-        // rotation: _rotationAnimation.value,
-        now: widget.now,
-        text: widget.text,
-        // scale: _scaleAnimation.value,
-        // opacity: _opacityAnimation.value,
+        isHourHand: widget.isHourHand,
+        rotation: _rotationAnimation.value,
       ),
     );
   }

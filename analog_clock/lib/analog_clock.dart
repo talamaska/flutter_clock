@@ -6,13 +6,14 @@ import 'dart:async';
 
 import 'package:analog_clock/widgets/background_circles.dart';
 import 'package:analog_clock/widgets/clock_hands.dart';
+import 'package:analog_clock/widgets/clock_numbers.dart';
 import 'package:analog_clock/widgets/clock_texts.dart';
 
 import 'package:analog_clock/widgets/off_center_hands.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:intl/intl.dart';
 
 /// A basic analog clock.
@@ -30,7 +31,10 @@ class AnalogClock extends StatefulWidget {
 class _AnalogClockState extends State<AnalogClock>
     with TickerProviderStateMixin {
   DateTime _now = DateTime.now();
-  Timer _timer;
+  Timer _timerSecond;
+  Timer _timerMinute;
+  Timer _timerHour;
+  Timer _timerHour24;
   var _temperature = '';
 
   var _temperatureHigh = '';
@@ -42,10 +46,6 @@ class _AnalogClockState extends State<AnalogClock>
   AnimationController _minutesController;
   AnimationController _hoursController;
   AnimationController _hours24Controller;
-
-  // AnimationController _secondsNumbersController;
-  // AnimationController _minutesNumbersController;
-  // AnimationController _hoursNumbersController;
 
   @override
   void initState() {
@@ -73,16 +73,19 @@ class _AnalogClockState extends State<AnalogClock>
     );
 
     if (!mounted) return;
-    _updateTime();
+    _updateTimeSeconds();
+    _updateTimeMinutes();
+    _updateTimeHours();
+    _updateTimeHours24();
     _updateModel();
-    setState(() {
-      _now = DateTime.now();
-      _minutesController.forward(from: (_now.second / 60));
-      _hoursController.forward(from: (_now.minute / 60));
-      _hours24Controller.forward(
-          from:
-              (_now.hour / 24 + _now.minute / 60 / 60 + _now.second / 60 / 60));
-    });
+    // setState(() {
+    //   _now = DateTime.now();
+    //   _minutesController.forward(from: (_now.second / 60));
+    //   _hoursController.forward(from: (_now.minute / 60));
+    //   _hours24Controller.forward(
+    //       from:
+    //           (_now.hour / 24 + _now.minute / 60 / 60 + _now.second / 60 / 60));
+    // });
     // _hoursController.forward(from: 0.0);
   }
 
@@ -97,7 +100,11 @@ class _AnalogClockState extends State<AnalogClock>
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _timerSecond?.cancel();
+    _timerMinute?.cancel();
+    _timerHour?.cancel();
+    _timerHour24?.cancel();
+
     widget.model.removeListener(_updateModel);
     _secondsController.dispose();
     _minutesController.dispose();
@@ -119,42 +126,83 @@ class _AnalogClockState extends State<AnalogClock>
     });
   }
 
-  void _updateTime() {
+  void _updateTimeSeconds() {
     setState(() {
       _now = DateTime.now();
       _secondsController.duration =
           Duration(seconds: 1) - Duration(milliseconds: _now.millisecond);
       _secondsController.forward(from: 0.0);
-      // _secondsNumbersController.forward(from: 0.0);
-      // _minutesController.forward(from: (_now.second / 0.6) / 100);
-      // _hoursController.forward(from: (_now.minute / 0.6) / 100);
 
-      // _minutesController.duration = Duration(seconds: 60) -
-      //     // Duration(minutes: _now.minute) -
-      //     Duration(milliseconds: _now.millisecond);
-
-      // _hoursController.duration = Duration(minutes: 60) -
-      //     // Duration(minutes: _now.minute) -
-      //     Duration(milliseconds: _now.millisecond);
-
-      // _hours24Controller.duration = Duration(hours: 24) -
-      //     // Duration(minutes: _now.minute) -
-      //     Duration(milliseconds: _now.millisecond);
-      // debugPrint('hour ${_now.hour}');
-      if (_now.second == 0) {
-        _minutesController.forward(from: 0.0);
-      }
-      if (_now.second == 0 && _now.minute == 0) {
-        _hoursController.forward(from: 0.0);
-      }
-
-      if (_now.second == 0 && _now.minute == 0 && _now.hour == 24) {
-        _hours24Controller.forward(from: 0.0);
-      }
-
-      _timer = Timer(
+      _timerSecond = Timer(
         Duration(seconds: 1) - Duration(milliseconds: _now.millisecond),
-        _updateTime,
+        _updateTimeSeconds,
+      );
+    });
+  }
+
+  void _updateTimeMinutes() {
+    setState(() {
+      _now = DateTime.now();
+      _minutesController.duration =
+          Duration(minutes: 1) - Duration(seconds: _now.second);
+      //  -
+      // Duration(milliseconds: _now.millisecond);
+      // debugPrint('${_now.second} + ${_now.millisecond}');
+      // final temp = (_now.second / 60) + _now.millisecond / 60000;
+      // debugPrint('temp $temp,   ${_minutesController.duration.inSeconds}');
+      _minutesController.forward(
+          from: (_now.second / 60) + _now.millisecond / (60 * 1000));
+
+      _timerMinute = Timer(
+        Duration(minutes: 1) - Duration(seconds: _now.second),
+        //  -
+        // Duration(milliseconds: _now.millisecond),
+        _updateTimeMinutes,
+      );
+    });
+  }
+
+  void _updateTimeHours() {
+    setState(() {
+      _now = DateTime.now();
+      _hoursController.duration = Duration(hours: 1) -
+          Duration(minutes: _now.minute) -
+          Duration(seconds: _now.second);
+      //  -
+      // Duration(milliseconds: _now.millisecond);
+      debugPrint('--- ${_hoursController.duration.inMinutes}');
+      _hoursController.forward(from: (_now.minute / 60));
+
+      _timerHour = Timer(
+        Duration(hours: 1) -
+            Duration(minutes: _now.minute) -
+            Duration(seconds: _now.second),
+        //  -
+        // Duration(milliseconds: _now.millisecond),
+        _updateTimeHours,
+      );
+    });
+  }
+
+  void _updateTimeHours24() {
+    setState(() {
+      _now = DateTime.now();
+      _hours24Controller.duration = Duration(days: 1) -
+          Duration(hours: _now.hour) -
+          Duration(minutes: _now.minute) -
+          Duration(seconds: _now.second);
+      // -
+      // Duration(milliseconds: _now.millisecond);
+      _hours24Controller.forward(from: (_now.hour / 24));
+
+      _timerHour24 = Timer(
+        Duration(days: 1) -
+            Duration(hours: _now.hour) -
+            Duration(minutes: _now.minute) -
+            Duration(seconds: _now.second),
+        //  -
+        // Duration(milliseconds: _now.millisecond),
+        _updateTimeHours24,
       );
     });
   }
@@ -172,46 +220,65 @@ class _AnalogClockState extends State<AnalogClock>
     final textTheme = Theme.of(context).textTheme;
     final customTheme = Theme.of(context).brightness == Brightness.light
         ? Theme.of(context).copyWith(
-            // texts, icons
-            primaryColor: Color(0xFF4285F4),
-            // offcenter circle background
-            highlightColor: Color(0xFF8AB4F8),
-            // hand body, progress fill, off center circles borders
-            accentColor: Color(0xFF669DF6),
+            primaryColor: Color(0xFFaf0435),
+            accentColor: Color(0xFFcc0033),
+            highlightColor: Color(0xFFf9bb7d),
+            cardColor: Color(0xFFffebc7),
+            dividerColor: Color(0xFFc69a6d),
+            errorColor: Color(0xFFcc0033), //text
             backgroundColor: Color(0xFFFFFFFF),
-            // hand numbers colors
-            errorColor: Color(0xFF4285F4),
-            textTheme: GoogleFonts.comfortaaTextTheme(textTheme),
+            splashColor: Color(0xFFDCBD93),
+            hintColor: Color(0xFFFFFFFF),
+            canvasColor: Color(0xFFf2e6da),
+            buttonColor: Color(0xFF3fa9f5),
+            textTheme: textTheme.apply(fontFamily: 'Comfortaa'),
           )
         : Theme.of(context).copyWith(
-            primaryColor: Color(0xFFD2E3FC),
-            highlightColor: Color(0xFF4285F4),
-            accentColor: Color(0xFF8AB4F8),
+            primaryColor: Color(0xFFc92b1b),
+            highlightColor: Color(0xFF282828),
+            accentColor: Color(0xFFe1432b),
+            cardColor: Color(0xFF333333),
+            dividerColor: Color(0xFF6b6764),
             backgroundColor: Color(0xFF3C4043),
-            errorColor: Colors.green,
-            textTheme: GoogleFonts.comfortaaTextTheme(textTheme),
+            canvasColor: Color(0xFF333333),
+            splashColor: Color(0xFF282828),
+            hintColor: Color(0xFF77726E),
+            errorColor: Color(0xFFe1432b),
+            buttonColor: Color(0xFF3fa9f5),
+            textTheme: textTheme.apply(fontFamily: 'Comfortaa'),
           );
 
     final time = DateFormat.Hms().format(DateTime.now());
-
+    // debugPrint('theme customTheme ${customTheme.textTheme.body1.fontFamily}');
     return Semantics.fromProperties(
       properties: SemanticsProperties(
         label: 'Analog clock with time $time',
         value: time,
       ),
       child: Container(
-        color: customTheme.backgroundColor,
+        // color: customTheme.backgroundColor,
         padding: EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+            customTheme.splashColor,
+            customTheme.hintColor,
+            customTheme.splashColor,
+          ], stops: [
+            0,
+            0.5,
+            1,
+          ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+        ),
         child: Container(
-            padding: EdgeInsets.all(3.0),
+            padding: EdgeInsets.all(0.0),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: customTheme.highlightColor.withOpacity(0.15),
-              border: Border.all(
-                color: customTheme.accentColor.withOpacity(0.3),
-                style: BorderStyle.solid,
-                width: 3,
-              ),
+              color: customTheme.highlightColor,
+              // border: Border.all(
+              //   color: customTheme.accentColor,
+              //   style: BorderStyle.solid,
+              //   width: 3,
+              // ),
             ),
             child: Stack(
               children: <Widget>[
@@ -226,6 +293,7 @@ class _AnalogClockState extends State<AnalogClock>
                   hoursController: _hoursController,
                   hours24Controller: _hours24Controller,
                 ),
+                ClockNumbers(customTheme: customTheme),
                 ClockHands(
                   customTheme: customTheme,
                   now: _now,

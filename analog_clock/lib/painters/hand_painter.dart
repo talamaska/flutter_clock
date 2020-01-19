@@ -7,8 +7,6 @@ class HandPainter extends CustomPainter {
   final double handSize;
   final double handHeadRadius;
   final double value;
-  final String text;
-  final int now;
 
   HandPainter({
     @required this.color,
@@ -16,8 +14,6 @@ class HandPainter extends CustomPainter {
     @required this.thickness,
     @required this.handHeadRadius,
     @required this.value,
-    @required this.now,
-    @required this.text,
   })  : assert(color != null),
         assert(thickness != null),
         assert(handHeadRadius != null),
@@ -31,15 +27,6 @@ class HandPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // final shadow = BoxShadow(
-    //   blurRadius: 5,
-    //   color: Colors.black12,
-    //   offset: Offset(2, 2),
-    //   spreadRadius: 1,
-    // );
-    // final paintS = shadow.toPaint();
-    // canvas.drawPaint(paintS);
-
     final center = (Offset.zero & size).center;
 
     final linePaint = Paint()
@@ -122,8 +109,6 @@ class HandPainter extends CustomPainter {
     return oldDelegate.color != color ||
         oldDelegate.thickness != thickness ||
         oldDelegate.value != value ||
-        oldDelegate.text != text ||
-        oldDelegate.now != now ||
         oldDelegate.handSize != handSize ||
         oldDelegate.handHeadRadius != handHeadRadius;
   }

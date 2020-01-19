@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show Colors;
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vector_math/vector_math.dart' as vm;
 
@@ -10,11 +10,10 @@ class HandProgressPainter extends CustomPainter {
   final double handSize;
   final double handHeadRadius;
   final double value;
-
+  final double rotation;
+  final bool isHourHand;
   final Paint progressPaint;
   final Paint innerCirclePaint;
-  final String text;
-  final int now;
 
   HandProgressPainter({
     @required this.color,
@@ -24,10 +23,8 @@ class HandProgressPainter extends CustomPainter {
     @required this.thickness,
     @required this.handHeadRadius,
     @required this.value,
-    @required this.now,
-    @required this.text,
-    // @required this.scale,
-    // @required this.opacity,
+    @required this.rotation,
+    this.isHourHand = false,
   })  : assert(color != null),
         assert(circleColor != null),
         assert(textColor != null),
@@ -36,11 +33,8 @@ class HandProgressPainter extends CustomPainter {
         assert(handSize != null),
         assert(handSize >= 0.0),
         assert(handSize <= 1.0),
-        // assert(scale != null),
-        // assert(opacity != null),
-
         progressPaint = Paint()
-          ..color = color
+          ..color = circleColor
           ..strokeWidth = thickness
           ..isAntiAlias = true
           ..strokeCap = StrokeCap.butt,
@@ -57,19 +51,6 @@ class HandProgressPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: textColor,
-          fontSize: getRadius(size, handHeadRadius) * 2 * 0.7,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr,
-    );
-
     canvas.save();
 
     canvas.translate(
@@ -78,8 +59,10 @@ class HandProgressPainter extends CustomPainter {
           getRadius(size, handHeadRadius) +
           (1 - handSize) * size.shortestSide,
     );
-    // debugPrint('now $now, value $value');
-    canvas.rotate(-now * vm.radians(360 / 60));
+    // if (isHourHand) {
+    //   debugPrint('now $rotation');
+    // }
+    canvas.rotate(vm.radians(-rotation));
 
     final Rect rect = Rect.fromLTWH(
       -getRadius(size, handHeadRadius),
@@ -87,21 +70,6 @@ class HandProgressPainter extends CustomPainter {
       getRadius(size, handHeadRadius) * 2,
       getRadius(size, handHeadRadius) * 2,
     );
-
-    final Path circle = Path()..addOval(rect);
-    canvas.drawPath(circle, innerCirclePaint);
-
-    // hand head
-    textPainter.layout(
-      minWidth: getRadius(size, handHeadRadius) * 2,
-      maxWidth: getRadius(size, handHeadRadius) * 2,
-    );
-
-    final offset = Offset(
-      -getRadius(size, handHeadRadius),
-      -getRadius(size, handHeadRadius) + getRadius(size, handHeadRadius) * 0.2,
-    );
-    textPainter.paint(canvas, offset);
 
     canvas.rotate(vm.radians(270));
 
@@ -112,10 +80,6 @@ class HandProgressPainter extends CustomPainter {
       true,
       progressPaint,
     );
-    canvas.saveLayer(null, Paint()..blendMode = BlendMode.multiply);
-    canvas.rotate(vm.radians(-270));
-    textPainter.paint(canvas, offset);
-    canvas.rotate(vm.radians(270));
 
     canvas.translate(
       -size.longestSide / 2,
@@ -123,7 +87,7 @@ class HandProgressPainter extends CustomPainter {
           getRadius(size, handHeadRadius) +
           (1 - handSize) * size.shortestSide,
     );
-    canvas.restore();
+    // canvas.restore();
     canvas.restore();
   }
 
@@ -134,7 +98,7 @@ class HandProgressPainter extends CustomPainter {
         oldDelegate.thickness != thickness ||
         oldDelegate.handSize != handSize ||
         oldDelegate.handHeadRadius != handHeadRadius ||
-        oldDelegate.text != text ||
+        oldDelegate.rotation != rotation ||
         oldDelegate.value != value;
   }
 }

@@ -91,3 +91,5 @@ unlinked_spec.ds
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+/analog_clock/android
+/analog_clock/ios

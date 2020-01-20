@@ -81,6 +81,7 @@ class _HandBodyState extends State<HandBody> {
           handSize: widget.size,
           handHeadRadius: widget.handHeadRadius,
           value: _handAnimation.value,
+          isHourHand: widget.isHourHand,
         ),
         child: widget.child,
       ),

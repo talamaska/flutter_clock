@@ -7,6 +7,7 @@ class HandPainter extends CustomPainter {
   final double handSize;
   final double handHeadRadius;
   final double value;
+  final bool isHourHand;
 
   HandPainter({
     @required this.color,
@@ -14,6 +15,7 @@ class HandPainter extends CustomPainter {
     @required this.thickness,
     @required this.handHeadRadius,
     @required this.value,
+    this.isHourHand = false,
   })  : assert(color != null),
         assert(thickness != null),
         assert(handHeadRadius != null),
@@ -58,10 +60,13 @@ class HandPainter extends CustomPainter {
 
     canvas.drawPath(path, linePaint);
 
-    // final Rect rect1 = Rect.fromCircle(center: center, radius: thickness);
-    // final Path circle1 = Path()..addOval(rect1);
+    if (isHourHand) {
+      final Rect rectCenter =
+          Rect.fromCircle(center: center, radius: thickness);
+      final Path circleCenter = Path()..addOval(rectCenter);
 
-    // canvas.drawPath(circle1, circlePaint);
+      canvas.drawPath(circleCenter, circlePaint);
+    }
 
     final Rect rect = Rect.fromLTWH(
       size.longestSide / 2 - getRadius(size, handHeadRadius) - thickness / 2,

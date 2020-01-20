@@ -25,10 +25,12 @@ flutter:
     - assets/animations/
 
   fonts:
+    - family: AnalogClock
+      fonts:
+        - asset: fonts/AnalogClock.ttf
     - family: Comfortaa
       fonts:
         - asset: fonts/Comfortaa-Regular.ttf
           weight: 400
         - asset: fonts/Comfortaa-Bold.ttf
           weight: 700
-

@@ -4,6 +4,7 @@ import 'package:flare_flutter/flare_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_dart/math/mat2d.dart';
+import 'package:flutter/semantics.dart';
 
 class ClockTexts extends StatefulWidget {
   ClockTexts({
@@ -48,16 +49,23 @@ class _ClockTextsState extends State<ClockTexts> {
               Container(
                 height: 60,
                 width: 80,
-                child: FlareActor(
-                  "assets/animations/${widget._condition}.flr",
-                  animation: 'loop',
-                  color: widget.customTheme.accentColor,
-                  fit: BoxFit.cover,
-                  controller: _loopController,
+                child: Semantics.fromProperties(
+                  properties: SemanticsProperties(
+                    label: 'Current weather condition is ${widget._condition}',
+                  ),
+                  child: FlareActor(
+                    "assets/animations/${widget._condition}.flr",
+                    animation: 'loop',
+                    color: widget.customTheme.accentColor,
+                    fit: BoxFit.cover,
+                    controller: _loopController,
+                  ),
                 ),
               ),
               RichText(
                 text: TextSpan(
+                  semanticsLabel:
+                      'The current temperature outside is ${widget._temperature}',
                   text: widget._temperature,
                   style: widget.customTheme.textTheme.body1.copyWith(
                     color: widget.customTheme.accentColor,
@@ -82,6 +90,8 @@ class _ClockTextsState extends State<ClockTexts> {
                     color: widget.customTheme.accentColor,
                     fontSize: 20,
                   ),
+                  semanticsLabel:
+                      'The highest temperature for the day will be ${widget._temperatureHigh}',
                 ),
               ),
               Container(
@@ -93,6 +103,8 @@ class _ClockTextsState extends State<ClockTexts> {
                     color: widget.customTheme.buttonColor,
                     fontSize: 20,
                   ),
+                  semanticsLabel:
+                      'The lowest temperature for the day will be ${widget._temperatureLow}',
                 ),
               ),
             ],
@@ -110,6 +122,7 @@ class _ClockTextsState extends State<ClockTexts> {
               color: widget.customTheme.buttonColor,
               fontSize: 14,
             ),
+            semanticsLabel: 'Your current location is ${widget._location}',
           ),
         )
       ],

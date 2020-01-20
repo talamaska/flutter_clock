@@ -12,9 +12,6 @@ import 'package:analog_clock/widgets/clock_texts.dart';
 import 'package:analog_clock/widgets/off_center_hands.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
-
-import 'package:intl/intl.dart';
 
 class AnalogClock extends StatefulWidget {
   const AnalogClock(this.model);
@@ -80,8 +77,8 @@ class _AnalogClockState extends State<AnalogClock>
           (_now.second / 60 / 60 / 24) +
           (_now.millisecond / 1000 / 60 / 60 / 24);
 
-      debugPrint(
-          '$dayPercent - ${dayPercent * 720} - ${(dayPercent / 2) * 360}');
+      // debugPrint(
+      //     '$dayPercent - ${dayPercent * 720} - ${(dayPercent / 2) * 360}');
 
       _minutesController.forward(from: minutePercent);
       _hoursController.forward(from: hourPercent);
@@ -210,67 +207,60 @@ class _AnalogClockState extends State<AnalogClock>
             textTheme: textTheme.apply(fontFamily: 'Comfortaa'),
           );
 
-    final time = DateFormat.Hms().format(DateTime.now());
     // debugPrint('theme customTheme ${customTheme.textTheme.body1.fontFamily}');
-    return Semantics.fromProperties(
-      properties: SemanticsProperties(
-        label: 'Analog clock with time $time',
-        value: time,
-      ),
-      child: ClipRect(
-        child: Container(
-          padding: EdgeInsets.all(5.0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-              customTheme.splashColor,
-              customTheme.hintColor,
-              customTheme.splashColor,
-            ], stops: [
-              0,
-              0.5,
-              1,
-            ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
-          ),
-          child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: customTheme.highlightColor,
-              ),
-              child: Stack(
-                children: <Widget>[
-                  BackgroundCircles(
-                    minutesController: _minutesController,
-                    customTheme: customTheme,
-                  ),
-                  OffCenterCircleHands(
-                    customTheme: customTheme,
-                    now: _now,
-                    minutesController: _minutesController,
-                    hoursController: _hoursController,
-                    hours24Controller: _hours24Controller,
-                  ),
-                  ClockNumbers(customTheme: customTheme),
-                  ClockHands(
-                    customTheme: customTheme,
-                    now: _now,
-                    is24HourFormat: widget.model.is24HourFormat,
-                    hoursController: _hoursController,
-                    hours24Controller: _hours24Controller,
-                    minutesController: _minutesController,
-                    secondsController: _secondsController,
-                  ),
-                  ClockTexts(
-                    temperatureHigh: _temperatureHigh,
-                    temperatureLow: _temperatureLow,
-                    location: _location,
-                    temperature: _temperature,
-                    customTheme: customTheme,
-                    condition: _condition,
-                  ),
-                  // Text('$_now'),
-                ],
-              )),
+    return ClipRect(
+      child: Container(
+        padding: EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+            customTheme.splashColor,
+            customTheme.hintColor,
+            customTheme.splashColor,
+          ], stops: [
+            0,
+            0.5,
+            1,
+          ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
         ),
+        child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: customTheme.highlightColor,
+            ),
+            child: Stack(
+              children: <Widget>[
+                BackgroundCircles(
+                  minutesController: _minutesController,
+                  customTheme: customTheme,
+                ),
+                OffCenterCircleHands(
+                  customTheme: customTheme,
+                  now: _now,
+                  minutesController: _minutesController,
+                  hoursController: _hoursController,
+                  hours24Controller: _hours24Controller,
+                ),
+                ClockNumbers(customTheme: customTheme),
+                ClockHands(
+                  customTheme: customTheme,
+                  now: _now,
+                  is24HourFormat: widget.model.is24HourFormat,
+                  hoursController: _hoursController,
+                  hours24Controller: _hours24Controller,
+                  minutesController: _minutesController,
+                  secondsController: _secondsController,
+                ),
+                ClockTexts(
+                  temperatureHigh: _temperatureHigh,
+                  temperatureLow: _temperatureLow,
+                  location: _location,
+                  temperature: _temperature,
+                  customTheme: customTheme,
+                  condition: _condition,
+                ),
+                // Text('$_now'),
+              ],
+            )),
       ),
     );
   }

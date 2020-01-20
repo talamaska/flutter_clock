@@ -8,8 +8,8 @@ See a [live demo](https://maryx.github.io/flutter_clock) with Flutter for Web! -
 
 Example [Analog Clock](analog_clock)
 
-<video src='analog_clock/analog_light.mp4' width='350'></video>
-<video src='analog_clock/analog_dark.mp4' width='350'></video>
+<img src='analog_clock/analog_light.gif' width='350'>
+<img src='analog_clock/analog_dark.gif' width='350'>
 <br>
 
 <img src='analog_clock/analog_light1.png' width='350'>

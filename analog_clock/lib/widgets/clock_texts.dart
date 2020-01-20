@@ -1,9 +1,12 @@
+import 'package:analog_clock/utils/analog_clock_icons.dart';
 import 'package:analog_clock/utils/loop_controller.dart';
 import 'package:flare_flutter/flare.dart';
 import 'package:flare_flutter/flare_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_dart/math/mat2d.dart';
+import 'package:flutter/semantics.dart';
 
 class ClockTexts extends StatefulWidget {
   ClockTexts({
@@ -28,6 +31,16 @@ class ClockTexts extends StatefulWidget {
   final String _location;
   final ThemeData customTheme;
 
+  final _weaterIcons = {
+    "cloudy": AnalogClock.clouds_inv,
+    "foggy": AnalogClock.fog,
+    "rainy": AnalogClock.rain_inv,
+    "snowy": AnalogClock.snow_heavy_inv,
+    "sunny": AnalogClock.sun_inv,
+    "thunderstorm": AnalogClock.cloud_flash_inv,
+    "windy": AnalogClock.wind,
+  };
+
   @override
   _ClockTextsState createState() => _ClockTextsState();
 }
@@ -48,16 +61,31 @@ class _ClockTextsState extends State<ClockTexts> {
               Container(
                 height: 60,
                 width: 80,
-                child: FlareActor(
-                  "assets/animations/${widget._condition}.flr",
-                  animation: 'loop',
-                  color: widget.customTheme.accentColor,
-                  fit: BoxFit.cover,
-                  controller: _loopController,
+                child: Semantics.fromProperties(
+                  properties: SemanticsProperties(
+                    label: 'Current weather condition is ${widget._condition}',
+                  ),
+                  child: (kIsWeb)
+                      ? Center(
+                          child: Icon(
+                            widget._weaterIcons[widget._condition],
+                            color: widget.customTheme.primaryColor,
+                            size: 40,
+                          ),
+                        )
+                      : FlareActor(
+                          "assets/animations/${widget._condition}.flr",
+                          animation: 'loop',
+                          color: widget.customTheme.accentColor,
+                          fit: BoxFit.cover,
+                          controller: _loopController,
+                        ),
                 ),
               ),
               RichText(
                 text: TextSpan(
+                  semanticsLabel:
+                      'The current temperature outside is ${widget._temperature}',
                   text: widget._temperature,
                   style: widget.customTheme.textTheme.body1.copyWith(
                     color: widget.customTheme.accentColor,
@@ -82,6 +110,8 @@ class _ClockTextsState extends State<ClockTexts> {
                     color: widget.customTheme.accentColor,
                     fontSize: 20,
                   ),
+                  semanticsLabel:
+                      'The highest temperature for the day will be ${widget._temperatureHigh}',
                 ),
               ),
               Container(
@@ -93,6 +123,8 @@ class _ClockTextsState extends State<ClockTexts> {
                     color: widget.customTheme.buttonColor,
                     fontSize: 20,
                   ),
+                  semanticsLabel:
+                      'The lowest temperature for the day will be ${widget._temperatureLow}',
                 ),
               ),
             ],
@@ -110,6 +142,7 @@ class _ClockTextsState extends State<ClockTexts> {
               color: widget.customTheme.buttonColor,
               fontSize: 14,
             ),
+            semanticsLabel: 'Your current location is ${widget._location}',
           ),
         )
       ],

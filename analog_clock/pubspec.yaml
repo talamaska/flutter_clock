@@ -25,9 +25,6 @@ flutter:
     - assets/animations/
 
   fonts:
-    - family: AnalogClock
-      fonts:
-        - asset: fonts/AnalogClock.ttf
     - family: Comfortaa
       fonts:
         - asset: fonts/Comfortaa-Regular.ttf

@@ -1,6 +1,8 @@
+import 'package:analog_clock/utils/analog_clock_icons.dart';
 import 'package:analog_clock/utils/loop_controller.dart';
 import 'package:flare_flutter/flare.dart';
 import 'package:flare_flutter/flare_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_dart/math/mat2d.dart';
@@ -29,6 +31,16 @@ class ClockTexts extends StatefulWidget {
   final String _location;
   final ThemeData customTheme;
 
+  final _weaterIcons = {
+    "cloudy": AnalogClock.clouds_inv,
+    "foggy": AnalogClock.fog,
+    "rainy": AnalogClock.rain_inv,
+    "snowy": AnalogClock.snow_heavy_inv,
+    "sunny": AnalogClock.sun_inv,
+    "thunderstorm": AnalogClock.cloud_flash_inv,
+    "windy": AnalogClock.wind,
+  };
+
   @override
   _ClockTextsState createState() => _ClockTextsState();
 }
@@ -53,13 +65,21 @@ class _ClockTextsState extends State<ClockTexts> {
                   properties: SemanticsProperties(
                     label: 'Current weather condition is ${widget._condition}',
                   ),
-                  child: FlareActor(
-                    "assets/animations/${widget._condition}.flr",
-                    animation: 'loop',
-                    color: widget.customTheme.accentColor,
-                    fit: BoxFit.cover,
-                    controller: _loopController,
-                  ),
+                  child: (kIsWeb)
+                      ? Center(
+                          child: Icon(
+                            widget._weaterIcons[widget._condition],
+                            color: widget.customTheme.primaryColor,
+                            size: 40,
+                          ),
+                        )
+                      : FlareActor(
+                          "assets/animations/${widget._condition}.flr",
+                          animation: 'loop',
+                          color: widget.customTheme.accentColor,
+                          fit: BoxFit.cover,
+                          controller: _loopController,
+                        ),
                 ),
               ),
               RichText(
